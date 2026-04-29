@@ -32,6 +32,7 @@ export default function Node({
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const savingRef = useRef(false);
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
@@ -48,11 +49,14 @@ export default function Node({
   };
 
   const handleLabelSave = () => {
+    if (savingRef.current) return;
+    savingRef.current = true;
     const trimmed = editValue.trim();
     if (trimmed && trimmed !== node.label) {
       onLabelChange(node.id, trimmed);
     }
     setIsEditing(false);
+    savingRef.current = false;
   };
 
   const handleInputKeyDown = (e: React.KeyboardEvent) => {
@@ -125,7 +129,7 @@ export default function Node({
               borderRadius: "3px",
               padding: "1px 2px",
               outline: "none",
-              boxSizing: "border-box" as const,
+              boxSizing: "border-box",
             }}
           />
         </foreignObject>
