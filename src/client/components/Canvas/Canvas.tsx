@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { AwsServiceDef } from "../../lib/aws-services";
 import { useCanvasStore } from "../../stores/canvas";
 import type { CanvasNode } from "../../types";
@@ -7,6 +7,8 @@ import EdgeComponent from "./Edge";
 import EdgeCreator from "./EdgeCreator";
 import Group from "./Group";
 import NodeComponent from "./Node";
+
+const DEFAULT_VIEWBOX = { x: 0, y: 0, w: 1200, h: 800 };
 
 export default function Canvas() {
   const {
@@ -164,6 +166,23 @@ export default function Canvas() {
     }
     setEdgeSourceId(null);
   };
+
+  useEffect(() => {
+    const handleZoom = (e: Event) => {
+      const detail = (e as CustomEvent<string>).detail;
+      setViewBox((prev) => {
+        if (detail === "reset") return { ...DEFAULT_VIEWBOX };
+        const scale = detail === "in" ? 0.8 : 1.25;
+        const cx = prev.x + prev.w / 2;
+        const cy = prev.y + prev.h / 2;
+        const newW = prev.w * scale;
+        const newH = prev.h * scale;
+        return { x: cx - newW / 2, y: cy - newH / 2, w: newW, h: newH };
+      });
+    };
+    window.addEventListener("canvas-zoom", handleZoom);
+    return () => window.removeEventListener("canvas-zoom", handleZoom);
+  }, []);
 
   const sourceNode = edgeSourceId ? data.nodes.find((n) => n.id === edgeSourceId) : null;
 
