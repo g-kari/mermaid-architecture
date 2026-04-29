@@ -11,7 +11,7 @@ export default function EdgeCreator({ startX, startY, endX, endY }: EdgeCreatorP
     <path
       d={`M ${startX} ${startY} C ${startX} ${midY}, ${endX} ${midY}, ${endX} ${endY}`}
       fill="none"
-      stroke="#3b82f6"
+      stroke="var(--port-color)"
       strokeWidth={2}
       strokeDasharray="6,3"
       opacity={0.7}

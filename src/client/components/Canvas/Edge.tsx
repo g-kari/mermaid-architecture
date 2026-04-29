@@ -35,13 +35,19 @@ export default function Edge({ edge, sourceNode, targetNode, isSelected, onSelec
       <path
         d={`M ${sx} ${sy} C ${sx} ${midY}, ${tx} ${midY}, ${tx} ${ty}`}
         fill="none"
-        stroke={isSelected ? "#3b82f6" : "#6b7280"}
+        stroke={isSelected ? "var(--edge-selected)" : "var(--edge-color)"}
         strokeWidth={isSelected ? 2.5 : 1.5}
         strokeDasharray={dashArray}
         markerEnd="url(#arrowhead)"
       />
       {edge.label && (
-        <text x={(sx + tx) / 2} y={midY - 6} textAnchor="middle" fill="#9ca3af" fontSize={10}>
+        <text
+          x={(sx + tx) / 2}
+          y={midY - 6}
+          textAnchor="middle"
+          fill="var(--edge-label)"
+          fontSize={10}
+        >
           {edge.label}
         </text>
       )}

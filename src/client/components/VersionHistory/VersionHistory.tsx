@@ -59,45 +59,45 @@ export default function VersionHistory({ diagramId }: VersionHistoryProps) {
   };
 
   return (
-    <div className="border-t border-gray-700">
+    <div className="border-t border-border">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-2 text-sm text-text-secondary hover:text-text hover:bg-bg-hover transition-colors"
       >
         <span>バージョン履歴</span>
         <span>{isOpen ? "▼" : "▲"}</span>
       </button>
 
       {isOpen && (
-        <div className="bg-gray-850 max-h-48 overflow-y-auto">
+        <div className="bg-bg-panel max-h-48 overflow-y-auto">
           <div className="px-4 py-2 flex gap-2">
             <button
               onClick={() => setShowSaveDialog(true)}
-              className="text-xs bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded"
+              className="text-xs bg-accent hover:bg-accent-hover px-3 py-1 rounded-md"
             >
               バージョンを保存
             </button>
           </div>
 
           {showSaveDialog && (
-            <div className="px-4 py-2 flex gap-2 bg-gray-800">
+            <div className="px-4 py-2 flex gap-2 bg-bg-panel">
               <input
                 type="text"
                 value={savingLabel}
                 onChange={(e) => setSavingLabel(e.target.value)}
                 placeholder="バージョン名（任意）"
-                className="flex-1 bg-gray-700 border border-gray-600 rounded px-2 py-1 text-xs text-white"
+                className="flex-1 bg-bg-hover border border-border-strong rounded-md px-2 py-1 text-xs text-text"
                 onKeyDown={(e) => e.key === "Enter" && saveSnapshot()}
               />
               <button
                 onClick={saveSnapshot}
-                className="text-xs bg-green-600 hover:bg-green-700 px-2 py-1 rounded"
+                className="text-xs bg-success hover:bg-success/80 px-2 py-1 rounded-md"
               >
                 保存
               </button>
               <button
                 onClick={() => setShowSaveDialog(false)}
-                className="text-xs text-gray-400 hover:text-white"
+                className="text-xs text-text-secondary hover:text-text"
               >
                 ×
               </button>
@@ -107,24 +107,24 @@ export default function VersionHistory({ diagramId }: VersionHistoryProps) {
           {snapshots.map((snapshot) => (
             <div
               key={snapshot.id}
-              className="px-4 py-2 flex items-center gap-3 hover:bg-gray-800 text-xs border-b border-gray-700/50"
+              className="px-4 py-2 flex items-center gap-3 hover:bg-bg-hover text-xs border-b border-border"
             >
               <div className="flex-1 min-w-0">
-                <div className="text-gray-300 truncate">{snapshot.label || "自動保存"}</div>
-                <div className="text-gray-500">
+                <div className="text-text-secondary truncate">{snapshot.label || "自動保存"}</div>
+                <div className="text-text-tertiary">
                   {new Date(snapshot.created_at).toLocaleString("ja-JP")} ・{" "}
                   {snapshot.created_by_email}
                 </div>
               </div>
               <button
                 onClick={() => previewSnapshot(snapshot)}
-                className="text-gray-400 hover:text-white shrink-0"
+                className="text-text-secondary hover:text-text shrink-0"
               >
                 プレビュー
               </button>
               <button
                 onClick={() => restoreSnapshot(snapshot.id)}
-                className="text-blue-400 hover:text-blue-300 shrink-0"
+                className="text-accent hover:text-accent shrink-0"
               >
                 復元
               </button>
@@ -132,25 +132,25 @@ export default function VersionHistory({ diagramId }: VersionHistoryProps) {
           ))}
 
           {snapshots.length === 0 && (
-            <p className="px-4 py-4 text-gray-500 text-xs text-center">
+            <p className="px-4 py-4 text-text-tertiary text-xs text-center">
               バージョン履歴がありません
             </p>
           )}
 
           {previewData && (
-            <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-              <div className="bg-gray-800 rounded-lg border border-gray-700 w-[640px] h-[480px] flex flex-col">
-                <div className="flex items-center justify-between p-4 border-b border-gray-700">
+            <div className="fixed inset-0 bg-overlay flex items-center justify-center z-50">
+              <div className="bg-bg-panel rounded-lg border border-border w-[640px] h-[480px] flex flex-col">
+                <div className="flex items-center justify-between p-4 border-b border-border">
                   <h2 className="font-medium text-sm">プレビュー</h2>
                   <button
                     onClick={() => setPreviewData(null)}
-                    className="text-gray-400 hover:text-white"
+                    className="text-text-secondary hover:text-text"
                   >
                     ×
                   </button>
                 </div>
                 <div className="flex-1 p-4 overflow-auto">
-                  <pre className="text-xs text-gray-400 font-mono">
+                  <pre className="text-xs text-text-secondary font-mono">
                     {JSON.stringify(previewData, null, 2)}
                   </pre>
                 </div>

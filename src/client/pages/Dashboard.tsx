@@ -31,7 +31,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-8">
+    <div className="min-h-screen bg-bg text-text p-8">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold mb-8">Mermaid Architecture</h1>
 
@@ -42,12 +42,12 @@ export default function Dashboard() {
             onChange={(e) => setNewName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && createProject()}
             placeholder="新しいプロジェクト名"
-            className="flex-1 bg-gray-800 border border-gray-700 rounded px-4 py-2 text-white placeholder-gray-500"
+            className="flex-1 bg-bg-input border border-border rounded-md px-4 py-2 text-text placeholder-text-tertiary"
           />
           <button
             onClick={createProject}
             disabled={creating || !newName.trim()}
-            className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 px-6 py-2 rounded font-medium"
+            className="bg-accent hover:bg-accent-hover disabled:opacity-50 px-6 py-2 rounded-md font-medium text-accent-text"
           >
             作成
           </button>
@@ -58,16 +58,16 @@ export default function Dashboard() {
             <Link
               key={project.id}
               to={`/projects/${project.id}`}
-              className="block bg-gray-800 border border-gray-700 rounded-lg p-4 hover:border-blue-500 transition-colors"
+              className="block bg-bg-panel border border-border rounded-lg p-4 hover:border-accent transition-colors"
             >
               <h2 className="text-lg font-medium">{project.name}</h2>
-              <p className="text-gray-400 text-sm mt-1">
+              <p className="text-text-secondary text-sm mt-1">
                 {new Date(project.updated_at).toLocaleString("ja-JP")}
               </p>
             </Link>
           ))}
           {projects.length === 0 && (
-            <p className="text-gray-500 text-center py-8">プロジェクトがありません</p>
+            <p className="text-text-tertiary text-center py-8">プロジェクトがありません</p>
           )}
         </div>
       </div>

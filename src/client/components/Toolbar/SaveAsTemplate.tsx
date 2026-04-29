@@ -31,45 +31,48 @@ export default function SaveAsTemplate() {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded transition-colors"
+        className="text-sm bg-bg-hover hover:bg-bg-hover px-3 py-1 rounded-md transition-colors"
       >
         テンプレート保存
       </button>
 
       {isOpen && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-gray-800 rounded-lg border border-gray-700 w-[400px]">
-            <div className="flex items-center justify-between p-4 border-b border-gray-700">
+        <div className="fixed inset-0 bg-overlay flex items-center justify-center z-50">
+          <div className="bg-bg-panel rounded-lg border border-border w-[400px]">
+            <div className="flex items-center justify-between p-4 border-b border-border">
               <h2 className="font-medium text-sm">テンプレートとして保存</h2>
-              <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white">
+              <button
+                onClick={() => setIsOpen(false)}
+                className="text-text-secondary hover:text-text"
+              >
                 &times;
               </button>
             </div>
             <div className="p-4 space-y-3">
               <div>
-                <label className="text-xs text-gray-400 block mb-1">名前</label>
+                <label className="text-xs text-text-secondary block mb-1">名前</label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-1.5 text-sm text-white"
+                  className="w-full bg-bg-hover border border-border-strong rounded-md px-3 py-1.5 text-sm text-text"
                 />
               </div>
               <div>
-                <label className="text-xs text-gray-400 block mb-1">説明（任意）</label>
+                <label className="text-xs text-text-secondary block mb-1">説明（任意）</label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={2}
-                  className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-1.5 text-sm text-white resize-none"
+                  className="w-full bg-bg-hover border border-border-strong rounded-md px-3 py-1.5 text-sm text-text resize-none"
                 />
               </div>
               <div>
-                <label className="text-xs text-gray-400 block mb-1">カテゴリ</label>
+                <label className="text-xs text-text-secondary block mb-1">カテゴリ</label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-1.5 text-sm text-white"
+                  className="w-full bg-bg-hover border border-border-strong rounded-md px-3 py-1.5 text-sm text-text"
                 >
                   <option value="web-app">Webアプリ</option>
                   <option value="static-site">静的サイト</option>
@@ -81,7 +84,7 @@ export default function SaveAsTemplate() {
               <button
                 onClick={handleSave}
                 disabled={saving || !name.trim()}
-                className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 px-4 py-2 rounded text-sm font-medium"
+                className="w-full bg-accent hover:bg-accent-hover disabled:opacity-50 px-4 py-2 rounded-md text-sm font-medium"
               >
                 {saving ? "保存中..." : "保存"}
               </button>

@@ -11,11 +11,11 @@ export default function Properties() {
   if (selectedNode) {
     const service = getServiceDef(selectedNode.type);
     return (
-      <div className="w-64 bg-gray-800 border-l border-gray-700 overflow-y-auto shrink-0 p-3">
-        <h2 className="text-sm font-medium text-gray-300 mb-4">ノード</h2>
+      <div className="w-64 bg-bg-panel border-l border-border overflow-y-auto shrink-0 p-3">
+        <h2 className="text-sm font-medium text-text-secondary mb-4">ノード</h2>
         <div className="space-y-3">
           <div>
-            <label className="text-xs text-gray-400 block mb-1">タイプ</label>
+            <label className="text-xs text-text-secondary block mb-1">タイプ</label>
             <div
               className="text-sm px-2 py-1 rounded flex items-center gap-2"
               style={{ backgroundColor: `${service?.color || "#666"}20` }}
@@ -28,37 +28,37 @@ export default function Properties() {
             </div>
           </div>
           <div>
-            <label className="text-xs text-gray-400 block mb-1">ラベル</label>
+            <label className="text-xs text-text-secondary block mb-1">ラベル</label>
             <input
               type="text"
               value={selectedNode.label}
               onChange={(e) => updateNode(selectedNode.id, { label: e.target.value })}
-              className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white"
+              className="w-full bg-bg-hover border border-border-strong rounded-md px-2 py-1 text-sm text-text"
             />
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="text-xs text-gray-400 block mb-1">X</label>
+              <label className="text-xs text-text-secondary block mb-1">X</label>
               <input
                 type="number"
                 value={Math.round(selectedNode.x)}
                 onChange={(e) => updateNode(selectedNode.id, { x: Number(e.target.value) })}
-                className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white"
+                className="w-full bg-bg-hover border border-border-strong rounded-md px-2 py-1 text-sm text-text"
               />
             </div>
             <div>
-              <label className="text-xs text-gray-400 block mb-1">Y</label>
+              <label className="text-xs text-text-secondary block mb-1">Y</label>
               <input
                 type="number"
                 value={Math.round(selectedNode.y)}
                 onChange={(e) => updateNode(selectedNode.id, { y: Number(e.target.value) })}
-                className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white"
+                className="w-full bg-bg-hover border border-border-strong rounded-md px-2 py-1 text-sm text-text"
               />
             </div>
           </div>
           <button
             onClick={() => removeNode(selectedNode.id)}
-            className="w-full bg-red-900/50 hover:bg-red-900 text-red-300 text-sm px-3 py-1.5 rounded transition-colors"
+            className="w-full bg-danger/10 hover:bg-danger/20 text-danger-text text-sm px-3 py-1.5 rounded-md transition-colors"
           >
             削除
           </button>
@@ -69,11 +69,11 @@ export default function Properties() {
 
   if (selectedEdge) {
     return (
-      <div className="w-64 bg-gray-800 border-l border-gray-700 overflow-y-auto shrink-0 p-3">
-        <h2 className="text-sm font-medium text-gray-300 mb-4">エッジ</h2>
+      <div className="w-64 bg-bg-panel border-l border-border overflow-y-auto shrink-0 p-3">
+        <h2 className="text-sm font-medium text-text-secondary mb-4">エッジ</h2>
         <div className="space-y-3">
           <div>
-            <label className="text-xs text-gray-400 block mb-1">ラベル</label>
+            <label className="text-xs text-text-secondary block mb-1">ラベル</label>
             <input
               type="text"
               value={selectedEdge.label || ""}
@@ -82,11 +82,11 @@ export default function Properties() {
                   label: e.target.value || undefined,
                 })
               }
-              className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white"
+              className="w-full bg-bg-hover border border-border-strong rounded-md px-2 py-1 text-sm text-text"
             />
           </div>
           <div>
-            <label className="text-xs text-gray-400 block mb-1">スタイル</label>
+            <label className="text-xs text-text-secondary block mb-1">スタイル</label>
             <select
               value={selectedEdge.style || "solid"}
               onChange={(e) =>
@@ -94,7 +94,7 @@ export default function Properties() {
                   style: e.target.value as "solid" | "dashed" | "dotted",
                 })
               }
-              className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white"
+              className="w-full bg-bg-hover border border-border-strong rounded-md px-2 py-1 text-sm text-text"
             >
               <option value="solid">実線</option>
               <option value="dashed">破線</option>
@@ -103,7 +103,7 @@ export default function Properties() {
           </div>
           <button
             onClick={() => removeEdge(selectedEdge.id)}
-            className="w-full bg-red-900/50 hover:bg-red-900 text-red-300 text-sm px-3 py-1.5 rounded transition-colors"
+            className="w-full bg-danger/10 hover:bg-danger/20 text-danger-text text-sm px-3 py-1.5 rounded-md transition-colors"
           >
             削除
           </button>
@@ -113,9 +113,9 @@ export default function Properties() {
   }
 
   return (
-    <div className="w-64 bg-gray-800 border-l border-gray-700 overflow-y-auto shrink-0 p-3">
-      <h2 className="text-sm font-medium text-gray-300 mb-2">プロパティ</h2>
-      <p className="text-gray-500 text-xs">ノードまたはエッジを選択してください</p>
+    <div className="w-64 bg-bg-panel border-l border-border overflow-y-auto shrink-0 p-3">
+      <h2 className="text-sm font-medium text-text-secondary mb-2">プロパティ</h2>
+      <p className="text-text-tertiary text-xs">ノードまたはエッジを選択してください</p>
     </div>
   );
 }

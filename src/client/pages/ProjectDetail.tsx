@@ -29,12 +29,12 @@ export default function ProjectDetail() {
     navigate(`/editor/${diagram.id}`);
   };
 
-  if (!project) return <div className="min-h-screen bg-gray-900" />;
+  if (!project) return <div className="min-h-screen bg-bg" />;
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-8">
+    <div className="min-h-screen bg-bg text-text p-8">
       <div className="max-w-4xl mx-auto">
-        <Link to="/" className="text-blue-400 hover:text-blue-300 text-sm mb-4 inline-block">
+        <Link to="/" className="text-accent hover:text-accent text-sm mb-4 inline-block">
           &larr; プロジェクト一覧
         </Link>
         <h1 className="text-3xl font-bold mb-8">{project.name}</h1>
@@ -42,7 +42,7 @@ export default function ProjectDetail() {
         <div className="mb-8">
           <button
             onClick={() => setShowTemplateSelector(true)}
-            className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded font-medium"
+            className="bg-accent hover:bg-accent-hover px-6 py-2 rounded-md font-medium text-accent-text"
           >
             + 新しいダイアグラム
           </button>
@@ -53,16 +53,16 @@ export default function ProjectDetail() {
             <Link
               key={d.id}
               to={`/editor/${d.id}`}
-              className="block bg-gray-800 border border-gray-700 rounded-lg p-4 hover:border-blue-500 transition-colors"
+              className="block bg-bg-panel border border-border rounded-lg p-4 hover:border-accent transition-colors"
             >
               <h2 className="text-lg font-medium">{d.name}</h2>
-              <p className="text-gray-400 text-sm mt-1">
+              <p className="text-text-secondary text-sm mt-1">
                 {new Date(d.updated_at).toLocaleString("ja-JP")}
               </p>
             </Link>
           ))}
           {diagrams.length === 0 && (
-            <p className="text-gray-500 text-center py-8">ダイアグラムがありません</p>
+            <p className="text-text-tertiary text-center py-8">ダイアグラムがありません</p>
           )}
         </div>
       </div>

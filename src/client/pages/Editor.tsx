@@ -6,6 +6,7 @@ import Properties from "../components/Properties/Properties";
 import ExportButton from "../components/Toolbar/ExportButton";
 import OnlineUsers from "../components/Toolbar/OnlineUsers";
 import SaveAsTemplate from "../components/Toolbar/SaveAsTemplate";
+import ThemeToggle from "../components/Toolbar/ThemeToggle";
 import VersionHistory from "../components/VersionHistory/VersionHistory";
 import { api } from "../lib/api";
 import { useCanvasStore } from "../stores/canvas";
@@ -54,20 +55,21 @@ export default function Editor() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  if (!diagram) return <div className="min-h-screen bg-gray-900" />;
+  if (!diagram) return <div className="min-h-screen bg-bg" />;
 
   return (
-    <div className="h-screen bg-gray-900 text-white flex flex-col">
-      <div className="h-12 bg-gray-800 border-b border-gray-700 flex items-center px-4 gap-4 shrink-0">
+    <div className="h-screen bg-bg text-text flex flex-col">
+      <div className="h-12 bg-bg-panel border-b border-border flex items-center px-4 gap-4 shrink-0">
         <Link
           to={`/projects/${diagram.project_id}`}
-          className="text-gray-400 hover:text-white text-sm"
+          className="text-text-secondary hover:text-text text-sm"
         >
           &larr;
         </Link>
         <span className="font-medium">{diagram.name}</span>
         <div className="ml-auto flex items-center gap-3">
           <OnlineUsers />
+          <ThemeToggle />
           <SaveAsTemplate />
           <ExportButton />
         </div>

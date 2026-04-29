@@ -1,1 +1,114 @@
 @import "tailwindcss";
+
+@theme {
+  --color-bg: var(--bg);
+  --color-bg-panel: var(--bg-panel);
+  --color-bg-canvas: var(--bg-canvas);
+  --color-bg-hover: var(--bg-hover);
+  --color-bg-input: var(--bg-input);
+
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --color-text: var(--text);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-text: var(--accent-text);
+
+  --color-danger: var(--danger);
+  --color-danger-hover: var(--danger-hover);
+  --color-danger-text: var(--danger-text);
+
+  --color-success: var(--success);
+
+  --color-overlay: var(--overlay);
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+}
+
+:root {
+  --bg: #ffffff;
+  --bg-panel: #f9fafb;
+  --bg-canvas: #f3f4f6;
+  --bg-hover: #f3f4f6;
+  --bg-input: #ffffff;
+
+  --border: #e5e7eb;
+  --border-strong: #d1d5db;
+
+  --text: #111827;
+  --text-secondary: #4b5563;
+  --text-tertiary: #9ca3af;
+
+  --accent: #4f46e5;
+  --accent-hover: #4338ca;
+  --accent-soft: #eef2ff;
+  --accent-text: #ffffff;
+
+  --danger: #ef4444;
+  --danger-hover: #dc2626;
+  --danger-text: #dc2626;
+
+  --success: #10b981;
+
+  --overlay: rgba(0, 0, 0, 0.3);
+
+  --grid-color: #e5e7eb;
+  --node-body: #ffffff;
+  --node-border: #e5e7eb;
+  --node-selected-border: #4f46e5;
+  --edge-color: #9ca3af;
+  --edge-selected: #4f46e5;
+  --edge-label: #6b7280;
+  --port-color: #4f46e5;
+  --port-target: #10b981;
+}
+
+.dark {
+  --bg: #0f172a;
+  --bg-panel: #1e293b;
+  --bg-canvas: #0f172a;
+  --bg-hover: #334155;
+  --bg-input: #1e293b;
+
+  --border: #334155;
+  --border-strong: #475569;
+
+  --text: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-tertiary: #64748b;
+
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --accent-soft: rgba(99, 102, 241, 0.15);
+  --accent-text: #ffffff;
+
+  --danger: #f87171;
+  --danger-hover: #ef4444;
+  --danger-text: #fca5a5;
+
+  --success: #34d399;
+
+  --overlay: rgba(0, 0, 0, 0.6);
+
+  --grid-color: #1e293b;
+  --node-body: #1e293b;
+  --node-border: #334155;
+  --node-selected-border: #6366f1;
+  --edge-color: #64748b;
+  --edge-selected: #6366f1;
+  --edge-label: #94a3b8;
+  --port-color: #6366f1;
+  --port-target: #34d399;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+}

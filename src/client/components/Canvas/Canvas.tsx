@@ -159,7 +159,7 @@ export default function Canvas() {
 
   return (
     <div
-      className="flex-1 bg-gray-950 relative overflow-hidden"
+      className="flex-1 bg-bg-canvas relative overflow-hidden"
       onDragOver={(e) => e.preventDefault()}
       onDrop={handleDrop}
     >
@@ -182,10 +182,10 @@ export default function Canvas() {
             refY="3.5"
             orient="auto"
           >
-            <polygon points="0 0, 10 3.5, 0 7" fill="#6b7280" />
+            <polygon points="0 0, 10 3.5, 0 7" fill="var(--edge-color)" />
           </marker>
           <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2937" strokeWidth="0.5" />
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="var(--grid-color)" strokeWidth="0.5" />
           </pattern>
         </defs>
 

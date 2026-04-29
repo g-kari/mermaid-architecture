@@ -34,11 +34,11 @@ export default function TemplateSelector({ isOpen, onClose, onSelect }: Template
     activeCategory === "all" ? templates : templates.filter((t) => t.category === activeCategory);
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-      <div className="bg-gray-800 rounded-lg border border-gray-700 w-[700px] max-h-[80vh] flex flex-col">
-        <div className="flex items-center justify-between p-4 border-b border-gray-700">
+    <div className="fixed inset-0 bg-overlay flex items-center justify-center z-50">
+      <div className="bg-bg-panel rounded-lg border border-border w-[700px] max-h-[80vh] flex flex-col">
+        <div className="flex items-center justify-between p-4 border-b border-border">
           <h2 className="font-medium">テンプレートを選択</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-white">
+          <button onClick={onClose} className="text-text-secondary hover:text-text">
             &times;
           </button>
         </div>
@@ -48,10 +48,10 @@ export default function TemplateSelector({ isOpen, onClose, onSelect }: Template
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`text-xs px-3 py-1 rounded ${
+              className={`text-xs px-3 py-1 rounded-md ${
                 activeCategory === cat
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                  ? "bg-accent text-accent-text"
+                  : "bg-bg-hover text-text-secondary hover:bg-bg-hover"
               }`}
             >
               {cat === "all" ? "すべて" : CATEGORY_LABELS[cat] || cat}
@@ -62,25 +62,25 @@ export default function TemplateSelector({ isOpen, onClose, onSelect }: Template
         <div className="flex-1 overflow-y-auto p-4 grid grid-cols-2 gap-3">
           <button
             onClick={() => onSelect(null)}
-            className="border-2 border-dashed border-gray-600 rounded-lg p-4 hover:border-blue-500 transition-colors text-center"
+            className="border-2 border-dashed border-border-strong rounded-lg p-4 hover:border-accent transition-colors text-center"
           >
-            <div className="text-gray-400 text-2xl mb-2">+</div>
-            <div className="text-sm text-gray-300">空のダイアグラム</div>
+            <div className="text-text-secondary text-2xl mb-2">+</div>
+            <div className="text-sm text-text-secondary">空のダイアグラム</div>
           </button>
 
           {filtered.map((template) => (
             <button
               key={template.id}
               onClick={() => onSelect(template)}
-              className="bg-gray-700 border border-gray-600 rounded-lg p-4 hover:border-blue-500 transition-colors text-left"
+              className="bg-bg-hover border border-border-strong rounded-lg p-4 hover:border-accent transition-colors text-left"
             >
-              <div className="text-sm font-medium text-gray-200">{template.name}</div>
+              <div className="text-sm font-medium text-text">{template.name}</div>
               {template.description && (
-                <div className="text-xs text-gray-400 mt-1 line-clamp-2">
+                <div className="text-xs text-text-secondary mt-1 line-clamp-2">
                   {template.description}
                 </div>
               )}
-              <div className="text-xs text-gray-500 mt-2">
+              <div className="text-xs text-text-tertiary mt-2">
                 {CATEGORY_LABELS[template.category] || template.category}
                 {template.is_builtin ? "" : " (カスタム)"}
               </div>

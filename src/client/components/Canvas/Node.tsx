@@ -45,8 +45,8 @@ export default function Node({
         width={node.width}
         height={node.height}
         rx={8}
-        fill="#1f2937"
-        stroke={isSelected ? "#3b82f6" : color}
+        fill="var(--node-body)"
+        stroke={isSelected ? "var(--node-selected-border)" : color}
         strokeWidth={isSelected ? 2.5 : 1.5}
       />
       <rect width={node.width} height={24} rx={8} fill={color} opacity={0.9} />
@@ -65,7 +65,7 @@ export default function Node({
         x={node.width / 2}
         y={node.height / 2 + 10}
         textAnchor="middle"
-        fill="#d1d5db"
+        fill="var(--text)"
         fontSize={10}
       >
         {node.label}
@@ -77,8 +77,8 @@ export default function Node({
           cx={node.width / 2}
           cy={node.height}
           r={6}
-          fill="#3b82f6"
-          stroke="#1e3a5f"
+          fill="var(--port-color)"
+          stroke="var(--node-border)"
           strokeWidth={2}
           className="cursor-crosshair"
           onMouseDown={(e) => {
@@ -94,8 +94,8 @@ export default function Node({
           cx={node.width / 2}
           cy={0}
           r={6}
-          fill="#10b981"
-          stroke="#064e3b"
+          fill="var(--port-target)"
+          stroke="var(--node-border)"
           strokeWidth={2}
           opacity={hovered ? 1 : 0.4}
         />

@@ -5,12 +5,12 @@ export default function OnlineUsers() {
 
   return (
     <div className="flex items-center gap-2">
-      <span className={`w-2 h-2 rounded-full ${connected ? "bg-green-500" : "bg-gray-500"}`} />
+      <span className={`w-2 h-2 rounded-full ${connected ? "bg-success" : "bg-text-tertiary"}`} />
       <div className="flex -space-x-1">
         {onlineUsers.map((user) => (
           <div
             key={user.clientId}
-            className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white border-2 border-gray-800"
+            className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white border-2 border-bg-panel"
             style={{ backgroundColor: user.color }}
             title={user.name}
           >
