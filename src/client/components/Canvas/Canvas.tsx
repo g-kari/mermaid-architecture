@@ -16,6 +16,7 @@ export default function Canvas() {
     addNode,
     addEdge,
     updateNode,
+    pushUndo,
     selectNode,
     selectEdge,
   } = useCanvasStore();
@@ -130,6 +131,7 @@ export default function Canvas() {
   const handleNodeDragStart = (nodeId: string, clientX: number, clientY: number) => {
     const node = data.nodes.find((n) => n.id === nodeId);
     if (!node) return;
+    pushUndo();
     const pos = svgPoint(clientX, clientY);
     setDraggingNodeId(nodeId);
     setDragOffset({ x: pos.x - node.x, y: pos.y - node.y });

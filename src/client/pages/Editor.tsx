@@ -46,7 +46,13 @@ export default function Editor() {
         }
       }
       if (e.ctrlKey || e.metaKey) {
-        if (e.key === "a") {
+        if (e.key === "z" && !e.shiftKey) {
+          e.preventDefault();
+          store.undo();
+        } else if ((e.key === "z" && e.shiftKey) || e.key === "y") {
+          e.preventDefault();
+          store.redo();
+        } else if (e.key === "a") {
           e.preventDefault();
         }
       }
