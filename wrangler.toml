@@ -4,7 +4,7 @@ compatibility_date = "2025-04-28"
 compatibility_flags = ["nodejs_compat"]
 
 [vars]
-DEV_MODE = "true"
+DEV_MODE = "false"
 
 [site]
 bucket = "./dist/client"
@@ -12,7 +12,7 @@ bucket = "./dist/client"
 [[d1_databases]]
 binding = "DB"
 database_name = "mermaid-arch-db"
-database_id = "placeholder-will-be-replaced"
+database_id = "386916bc-18f9-4867-91f8-7e5e0df6cd35"
 migrations_dir = "migrations"
 
 [durable_objects]
