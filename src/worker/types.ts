@@ -4,6 +4,7 @@ export type Bindings = {
   DB: D1Database;
   DIAGRAM_ROOM: DurableObjectNamespace;
   DEV_MODE: string;
+  __STATIC_CONTENT: KVNamespace;
 };
 
 export type Variables = {

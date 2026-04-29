@@ -1,5 +1,8 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { serveStatic } from "hono/cloudflare-workers";
+// @ts-expect-error Workers Sites manifest
+import manifest from "__STATIC_CONTENT_MANIFEST";
 import { authMiddleware } from "./middleware/auth";
 import type { AppEnv } from "./types";
 import users from "./routes/users";
@@ -32,6 +35,10 @@ app.get("/api/ws/diagrams/:diagramId", (c) => {
   url.searchParams.set("diagramId", diagramId);
   return stub.fetch(new Request(url.toString(), c.req.raw));
 });
+
+app.use("/assets/*", serveStatic({ manifest }));
+
+app.get("*", serveStatic({ path: "./index.html", manifest }));
 
 export { DiagramRoom } from "./durable-objects/diagram-room";
 export default app;
