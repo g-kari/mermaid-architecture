@@ -1,12 +1,39 @@
 import { getServiceDef } from "../../lib/aws-services";
 import { useCanvasStore } from "../../stores/canvas";
 
+const GROUP_TYPE_LABELS: Record<string, string> = {
+  vpc: "VPC",
+  subnet: "Subnet",
+  az: "Availability Zone",
+  region: "Region",
+  generic: "グループ",
+};
+
+const GROUP_COLORS: Record<string, string> = {
+  vpc: "#8C4FFF",
+  subnet: "#3F8624",
+  az: "#ED7100",
+  region: "#2E27AD",
+  generic: "#6b7280",
+};
+
 export default function Properties() {
-  const { data, selectedNodeId, selectedEdgeId, updateNode, updateEdge, removeNode, removeEdge } =
-    useCanvasStore();
+  const {
+    data,
+    selectedNodeId,
+    selectedEdgeId,
+    selectedGroupId,
+    updateNode,
+    updateEdge,
+    updateGroup,
+    removeNode,
+    removeEdge,
+    removeGroup,
+  } = useCanvasStore();
 
   const selectedNode = selectedNodeId ? data.nodes.find((n) => n.id === selectedNodeId) : null;
   const selectedEdge = selectedEdgeId ? data.edges.find((e) => e.id === selectedEdgeId) : null;
+  const selectedGroup = selectedGroupId ? data.groups.find((g) => g.id === selectedGroupId) : null;
 
   if (selectedNode) {
     const service = getServiceDef(selectedNode.type);
@@ -103,6 +130,50 @@ export default function Properties() {
           </div>
           <button
             onClick={() => removeEdge(selectedEdge.id)}
+            className="w-full bg-danger/10 hover:bg-danger/20 text-danger-text text-sm px-3 py-1.5 rounded-md transition-colors"
+          >
+            削除
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (selectedGroup) {
+    const color = GROUP_COLORS[selectedGroup.type] || GROUP_COLORS.generic;
+    const childCount = data.nodes.filter(
+      (n) => n.group === selectedGroup.id || selectedGroup.children.includes(n.id),
+    ).length;
+
+    return (
+      <div className="w-64 bg-bg-panel border-l border-border overflow-y-auto shrink-0 p-3">
+        <h2 className="text-sm font-medium text-text-secondary mb-4">ゾーン</h2>
+        <div className="space-y-3">
+          <div>
+            <label className="text-xs text-text-secondary block mb-1">タイプ</label>
+            <div
+              className="text-sm px-2 py-1 rounded flex items-center gap-2"
+              style={{ backgroundColor: `${color}20` }}
+            >
+              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
+              {GROUP_TYPE_LABELS[selectedGroup.type] || selectedGroup.type}
+            </div>
+          </div>
+          <div>
+            <label className="text-xs text-text-secondary block mb-1">ラベル</label>
+            <input
+              type="text"
+              value={selectedGroup.label}
+              onChange={(e) => updateGroup(selectedGroup.id, { label: e.target.value })}
+              className="w-full bg-bg-hover border border-border-strong rounded-md px-2 py-1 text-sm text-text"
+            />
+          </div>
+          <div>
+            <label className="text-xs text-text-secondary block mb-1">子ノード数</label>
+            <div className="text-sm text-text px-2 py-1">{childCount}</div>
+          </div>
+          <button
+            onClick={() => removeGroup(selectedGroup.id)}
             className="w-full bg-danger/10 hover:bg-danger/20 text-danger-text text-sm px-3 py-1.5 rounded-md transition-colors"
           >
             削除

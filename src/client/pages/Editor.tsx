@@ -68,18 +68,18 @@ export default function Editor() {
           store.removeNode(store.selectedNodeId);
         } else if (store.selectedEdgeId) {
           store.removeEdge(store.selectedEdgeId);
+        } else if (store.selectedGroupId) {
+          store.removeGroup(store.selectedGroupId);
         }
         return;
       }
 
       if (
         ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key) &&
-        store.selectedNodeId
+        (store.selectedNodeId || store.selectedGroupId)
       ) {
         e.preventDefault();
         const step = e.shiftKey ? MOVE_STEP_LARGE : MOVE_STEP;
-        const node = store.data.nodes.find((n) => n.id === store.selectedNodeId);
-        if (!node) return;
         if (!arrowUndoPushed) {
           store.pushUndo();
           arrowUndoPushed = true;
@@ -90,7 +90,12 @@ export default function Editor() {
         }, 500);
         const dx = e.key === "ArrowLeft" ? -step : e.key === "ArrowRight" ? step : 0;
         const dy = e.key === "ArrowUp" ? -step : e.key === "ArrowDown" ? step : 0;
-        store.updateNode(node.id, { x: node.x + dx, y: node.y + dy });
+        if (store.selectedGroupId) {
+          store.moveGroupChildren(store.selectedGroupId, dx, dy);
+        } else if (store.selectedNodeId) {
+          const node = store.data.nodes.find((n) => n.id === store.selectedNodeId);
+          if (node) store.updateNode(node.id, { x: node.x + dx, y: node.y + dy });
+        }
         return;
       }
 

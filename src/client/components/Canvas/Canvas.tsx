@@ -15,12 +15,15 @@ export default function Canvas() {
     data,
     selectedNodeId,
     selectedEdgeId,
+    selectedGroupId,
     addNode,
     addEdge,
     updateNode,
+    moveGroupChildren,
     pushUndo,
     selectNode,
     selectEdge,
+    selectGroup,
   } = useCanvasStore();
 
   const svgRef = useRef<SVGSVGElement>(null);
@@ -30,6 +33,9 @@ export default function Canvas() {
 
   const [draggingNodeId, setDraggingNodeId] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+
+  const [draggingGroupId, setDraggingGroupId] = useState<string | null>(null);
+  const [groupDragPrev, setGroupDragPrev] = useState({ x: 0, y: 0 });
 
   const [edgeSourceId, setEdgeSourceId] = useState<string | null>(null);
   const [edgeEndPos, setEdgeEndPos] = useState({ x: 0, y: 0 });
@@ -76,6 +82,7 @@ export default function Canvas() {
     }
     selectNode(null);
     selectEdge(null);
+    selectGroup(null);
     setIsPanning(true);
     setPanStart({ x: e.clientX, y: e.clientY });
   };
@@ -84,6 +91,15 @@ export default function Canvas() {
     if (edgeSourceId) {
       const pos = svgPoint(e.clientX, e.clientY);
       setEdgeEndPos(pos);
+      return;
+    }
+
+    if (draggingGroupId) {
+      const pos = svgPoint(e.clientX, e.clientY);
+      const dx = pos.x - groupDragPrev.x;
+      const dy = pos.y - groupDragPrev.y;
+      moveGroupChildren(draggingGroupId, dx, dy);
+      setGroupDragPrev(pos);
       return;
     }
 
@@ -110,6 +126,7 @@ export default function Canvas() {
   const handleMouseUp = () => {
     setIsPanning(false);
     setDraggingNodeId(null);
+    setDraggingGroupId(null);
   };
 
   const handleWheel = (e: React.WheelEvent) => {
@@ -137,6 +154,13 @@ export default function Canvas() {
     const pos = svgPoint(clientX, clientY);
     setDraggingNodeId(nodeId);
     setDragOffset({ x: pos.x - node.x, y: pos.y - node.y });
+  };
+
+  const handleGroupDragStart = (groupId: string, clientX: number, clientY: number) => {
+    pushUndo();
+    const pos = svgPoint(clientX, clientY);
+    setDraggingGroupId(groupId);
+    setGroupDragPrev(pos);
   };
 
   const handleNodeConnectStart = (nodeId: string) => {
@@ -228,7 +252,14 @@ export default function Canvas() {
         />
 
         {data.groups.map((group) => (
-          <Group key={group.id} group={group} nodes={data.nodes} />
+          <Group
+            key={group.id}
+            group={group}
+            nodes={data.nodes}
+            isSelected={selectedGroupId === group.id}
+            onSelect={selectGroup}
+            onDragStart={handleGroupDragStart}
+          />
         ))}
 
         {data.edges.map((edge) => {

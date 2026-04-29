@@ -12,6 +12,7 @@ interface CanvasState {
   data: CanvasData;
   selectedNodeId: string | null;
   selectedEdgeId: string | null;
+  selectedGroupId: string | null;
   undoStack: CanvasData[];
   redoStack: CanvasData[];
 
@@ -26,9 +27,12 @@ interface CanvasState {
   updateEdge: (id: string, updates: Partial<CanvasEdge>) => void;
   removeEdge: (id: string) => void;
   addGroup: (group: CanvasGroup) => void;
+  updateGroup: (id: string, updates: Partial<CanvasGroup>) => void;
   removeGroup: (id: string) => void;
+  moveGroupChildren: (groupId: string, dx: number, dy: number) => void;
   selectNode: (id: string | null) => void;
   selectEdge: (id: string | null) => void;
+  selectGroup: (id: string | null) => void;
   deselectAll: () => void;
   duplicateNode: (id: string) => void;
 }
@@ -37,6 +41,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
   data: { nodes: [], edges: [], groups: [] },
   selectedNodeId: null,
   selectedEdgeId: null,
+  selectedGroupId: null,
   undoStack: [],
   redoStack: [],
 
@@ -58,6 +63,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
       redoStack: [...get().redoStack, cloneData(data)],
       selectedNodeId: null,
       selectedEdgeId: null,
+      selectedGroupId: null,
     });
   },
 
@@ -71,6 +77,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
       undoStack: [...get().undoStack, cloneData(data)],
       selectedNodeId: null,
       selectedEdgeId: null,
+      selectedGroupId: null,
     });
   },
 
@@ -134,20 +141,48 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
     set((s) => ({ data: { ...s.data, groups: [...s.data.groups, group] } }));
   },
 
+  updateGroup: (id, updates) => {
+    get().pushUndo();
+    set((s) => ({
+      data: {
+        ...s.data,
+        groups: s.data.groups.map((g) => (g.id === id ? { ...g, ...updates } : g)),
+      },
+    }));
+  },
+
   removeGroup: (id) => {
     get().pushUndo();
     set((s) => ({
       data: {
         ...s.data,
         groups: s.data.groups.filter((g) => g.id !== id),
+        nodes: s.data.nodes.map((n) => (n.group === id ? { ...n, group: undefined } : n)),
+      },
+      selectedGroupId: s.selectedGroupId === id ? null : s.selectedGroupId,
+    }));
+  },
+
+  moveGroupChildren: (groupId, dx, dy) => {
+    const group = get().data.groups.find((g) => g.id === groupId);
+    if (!group) return;
+    set((s) => ({
+      data: {
+        ...s.data,
+        nodes: s.data.nodes.map((n) =>
+          n.group === groupId || group.children.includes(n.id)
+            ? { ...n, x: n.x + dx, y: n.y + dy }
+            : n,
+        ),
       },
     }));
   },
 
-  selectNode: (id) => set({ selectedNodeId: id, selectedEdgeId: null }),
-  selectEdge: (id) => set({ selectedEdgeId: id, selectedNodeId: null }),
+  selectNode: (id) => set({ selectedNodeId: id, selectedEdgeId: null, selectedGroupId: null }),
+  selectEdge: (id) => set({ selectedEdgeId: id, selectedNodeId: null, selectedGroupId: null }),
+  selectGroup: (id) => set({ selectedGroupId: id, selectedNodeId: null, selectedEdgeId: null }),
 
-  deselectAll: () => set({ selectedNodeId: null, selectedEdgeId: null }),
+  deselectAll: () => set({ selectedNodeId: null, selectedEdgeId: null, selectedGroupId: null }),
 
   duplicateNode: (id) => {
     const node = get().data.nodes.find((n) => n.id === id);

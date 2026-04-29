@@ -3,6 +3,9 @@ import type { CanvasGroup, CanvasNode } from "../../types";
 interface GroupProps {
   group: CanvasGroup;
   nodes: CanvasNode[];
+  isSelected: boolean;
+  onSelect: (id: string) => void;
+  onDragStart: (groupId: string, clientX: number, clientY: number) => void;
 }
 
 const GROUP_COLORS: Record<string, string> = {
@@ -13,7 +16,7 @@ const GROUP_COLORS: Record<string, string> = {
   generic: "#6b7280",
 };
 
-export default function Group({ group, nodes }: GroupProps) {
+export default function Group({ group, nodes, isSelected, onSelect, onDragStart }: GroupProps) {
   const childNodes = nodes.filter((n) => n.group === group.id || group.children.includes(n.id));
 
   if (childNodes.length === 0) return null;
@@ -28,8 +31,20 @@ export default function Group({ group, nodes }: GroupProps) {
 
   const color = GROUP_COLORS[group.type] || GROUP_COLORS.generic;
 
+  const handleHeaderMouseDown = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onSelect(group.id);
+    onDragStart(group.id, e.clientX, e.clientY);
+  };
+
+  const handleBorderClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onSelect(group.id);
+  };
+
   return (
     <g>
+      {/* border - clickable for selection */}
       <rect
         x={minX}
         y={minY}
@@ -38,10 +53,13 @@ export default function Group({ group, nodes }: GroupProps) {
         rx={6}
         fill="none"
         stroke={color}
-        strokeWidth={1.5}
-        strokeDasharray="6,3"
-        opacity={0.6}
+        strokeWidth={isSelected ? 2.5 : 1.5}
+        strokeDasharray={isSelected ? "none" : "6,3"}
+        opacity={isSelected ? 0.9 : 0.6}
+        style={{ cursor: "pointer" }}
+        onMouseDown={handleBorderClick}
       />
+      {/* header - draggable */}
       <rect
         x={minX}
         y={minY}
@@ -49,9 +67,19 @@ export default function Group({ group, nodes }: GroupProps) {
         height={headerHeight}
         rx={6}
         fill={color}
-        opacity={0.15}
+        opacity={isSelected ? 0.3 : 0.15}
+        style={{ cursor: "grab" }}
+        onMouseDown={handleHeaderMouseDown}
       />
-      <text x={minX + 8} y={minY + 18} fill={color} fontSize={11} fontWeight="bold" opacity={0.8}>
+      <text
+        x={minX + 8}
+        y={minY + 18}
+        fill={color}
+        fontSize={11}
+        fontWeight="bold"
+        opacity={0.8}
+        style={{ pointerEvents: "none" }}
+      >
         {group.label}
       </text>
     </g>
