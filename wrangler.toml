@@ -3,6 +3,15 @@ main = "src/worker/index.ts"
 compatibility_date = "2025-04-28"
 compatibility_flags = ["nodejs_compat"]
 
+workers_dev = true
+
+routes = [
+  { pattern = "mermaid-architecture.0g0.xyz", custom_domain = true }
+]
+
+[observability]
+enabled = true
+
 [vars]
 DEV_MODE = "false"
 CF_ACCESS_AUD = "134411172b5651e1de7ef0090d88b71ae790a078dea2e8bf17ec59ad3a801c03"
