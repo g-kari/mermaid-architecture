@@ -145,6 +145,14 @@ export default function Canvas() {
     }
   };
 
+  const handleLabelChange = useCallback(
+    (id: string, label: string) => {
+      pushUndo();
+      updateNode(id, { label });
+    },
+    [pushUndo, updateNode],
+  );
+
   const handleNodeConnectEnd = (nodeId: string) => {
     if (edgeSourceId && edgeSourceId !== nodeId) {
       addEdge({
@@ -238,6 +246,7 @@ export default function Canvas() {
             onDragStart={handleNodeDragStart}
             onConnectStart={handleNodeConnectStart}
             onConnectEnd={handleNodeConnectEnd}
+            onLabelChange={handleLabelChange}
           />
         ))}
       </svg>

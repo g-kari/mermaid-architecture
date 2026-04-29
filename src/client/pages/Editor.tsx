@@ -37,6 +37,8 @@ export default function Editor() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      const tag = document.activeElement?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
       const store = useCanvasStore.getState();
       if (e.key === "Delete" || e.key === "Backspace") {
         if (store.selectedNodeId) {

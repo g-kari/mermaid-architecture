@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getIconName } from "../../lib/aws-icons";
 import { getServiceDef } from "../../lib/aws-services";
 import type { CanvasNode } from "../../types";
@@ -12,6 +12,7 @@ interface NodeProps {
   onDragStart: (id: string, startX: number, startY: number) => void;
   onConnectStart: (id: string) => void;
   onConnectEnd: (id: string) => void;
+  onLabelChange: (id: string, label: string) => void;
 }
 
 export default function Node({
@@ -22,11 +23,46 @@ export default function Node({
   onDragStart,
   onConnectStart,
   onConnectEnd,
+  onLabelChange,
 }: NodeProps) {
   const service = getServiceDef(node.type);
   const color = service?.color || "#666";
   const iconName = getIconName(node.type);
   const [hovered, setHovered] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValue, setEditValue] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditing]);
+
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isConnecting) return;
+    setEditValue(node.label);
+    setIsEditing(true);
+  };
+
+  const handleLabelSave = () => {
+    const trimmed = editValue.trim();
+    if (trimmed && trimmed !== node.label) {
+      onLabelChange(node.id, trimmed);
+    }
+    setIsEditing(false);
+  };
+
+  const handleInputKeyDown = (e: React.KeyboardEvent) => {
+    e.stopPropagation();
+    if (e.key === "Enter") {
+      handleLabelSave();
+    } else if (e.key === "Escape") {
+      setIsEditing(false);
+    }
+  };
 
   return (
     <g
@@ -35,6 +71,7 @@ export default function Node({
       onMouseLeave={() => setHovered(false)}
       onMouseDown={(e) => {
         e.stopPropagation();
+        if (isEditing) return;
         if (isConnecting) {
           onConnectEnd(node.id);
           return;
@@ -42,6 +79,7 @@ export default function Node({
         onSelect(node.id);
         onDragStart(node.id, e.clientX, e.clientY);
       }}
+      onDoubleClick={handleDoubleClick}
       className="cursor-move"
     >
       <rect
@@ -69,15 +107,39 @@ export default function Node({
           <Icon icon={iconName} width={28} height={28} />
         </foreignObject>
       )}
-      <text
-        x={node.width / 2}
-        y={node.height - 8}
-        textAnchor="middle"
-        fill="var(--text)"
-        fontSize={10}
-      >
-        {node.label}
-      </text>
+      {isEditing ? (
+        <foreignObject x={2} y={node.height - 22} width={node.width - 4} height={20}>
+          <input
+            ref={inputRef}
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            onBlur={handleLabelSave}
+            onKeyDown={handleInputKeyDown}
+            style={{
+              width: "100%",
+              fontSize: "10px",
+              textAlign: "center",
+              background: "var(--bg-input)",
+              color: "var(--text)",
+              border: "1px solid var(--border-strong)",
+              borderRadius: "3px",
+              padding: "1px 2px",
+              outline: "none",
+              boxSizing: "border-box" as const,
+            }}
+          />
+        </foreignObject>
+      ) : (
+        <text
+          x={node.width / 2}
+          y={node.height - 8}
+          textAnchor="middle"
+          fill="var(--text)"
+          fontSize={10}
+        >
+          {node.label}
+        </text>
+      )}
 
       {/* Connection port (bottom center) - visible on hover */}
       {(hovered || isSelected) && !isConnecting && (
