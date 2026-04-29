@@ -174,6 +174,7 @@ export default function Canvas() {
       onDrop={handleDrop}
     >
       <svg
+        id="canvas-svg"
         ref={svgRef}
         viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`}
         className="w-full h-full"
