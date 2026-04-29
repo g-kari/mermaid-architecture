@@ -1,0 +1,25 @@
+name = "mermaid-architecture"
+main = "src/worker/index.ts"
+compatibility_date = "2025-04-28"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+DEV_MODE = "true"
+
+[site]
+bucket = "./dist/client"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "mermaid-arch-db"
+database_id = "placeholder-will-be-replaced"
+migrations_dir = "migrations"
+
+[durable_objects]
+bindings = [
+  { name = "DIAGRAM_ROOM", class_name = "DiagramRoom" }
+]
+
+[[migrations]]
+tag = "v1"
+new_classes = ["DiagramRoom"]
