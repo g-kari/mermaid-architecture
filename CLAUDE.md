@@ -64,3 +64,6 @@ just setup            # pre-commit hooks インストール
 - ノード追加は HTML5 Drag and Drop API（dnd-kitではない）
 - DiagramRoom は30秒間隔のalarmでD1にフラッシュ
 - コミット時にpre-commitでBiome + typecheck + testが自動実行される
+- アイコンはiconify.design（@iconify/react）を利用。`src/client/lib/aws-icons.ts` でサービスIDとiconify名のマッピングを管理
+- iconifyアイコン名の追加時は `https://api.iconify.design/{prefix}/{name}.svg` で存在確認すること
+- SVGキャンバス内でHTMLコンポーネントを使う場合は `<foreignObject>` でラップすること
