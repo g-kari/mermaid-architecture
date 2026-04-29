@@ -1,4 +1,6 @@
+import { Icon } from "@iconify/react";
 import { useState } from "react";
+import { getIconName } from "../../lib/aws-icons";
 import {
   AWS_CATEGORIES,
   type AwsCategory,
@@ -59,11 +61,17 @@ export default function Palette({ onDragStart }: PaletteProps) {
                       }}
                       className="flex flex-col items-center gap-1 p-2 rounded cursor-grab hover:bg-bg-hover active:cursor-grabbing transition-colors"
                     >
-                      <div
-                        className="w-8 h-8 rounded flex items-center justify-center text-white text-xs font-bold"
-                        style={{ backgroundColor: service.color }}
-                      >
-                        {service.name.slice(0, 3)}
+                      <div className="w-8 h-8 rounded flex items-center justify-center">
+                        {getIconName(service.id) ? (
+                          <Icon icon={getIconName(service.id)!} width={24} height={24} />
+                        ) : (
+                          <div
+                            className="w-full h-full rounded flex items-center justify-center text-white text-xs font-bold"
+                            style={{ backgroundColor: service.color }}
+                          >
+                            {service.name.slice(0, 3)}
+                          </div>
+                        )}
                       </div>
                       <span className="text-xs text-text-secondary text-center leading-tight">
                         {service.name}

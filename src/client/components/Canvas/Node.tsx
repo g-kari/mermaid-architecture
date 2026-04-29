@@ -1,4 +1,6 @@
+import { Icon } from "@iconify/react";
 import { useState } from "react";
+import { getIconName } from "../../lib/aws-icons";
 import { getServiceDef } from "../../lib/aws-services";
 import type { CanvasNode } from "../../types";
 
@@ -23,6 +25,7 @@ export default function Node({
 }: NodeProps) {
   const service = getServiceDef(node.type);
   const color = service?.color || "#666";
+  const iconName = getIconName(node.type);
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -61,9 +64,14 @@ export default function Node({
       >
         {service?.name || node.type}
       </text>
+      {iconName && (
+        <foreignObject x={(node.width - 28) / 2} y={28} width={28} height={28}>
+          <Icon icon={iconName} width={28} height={28} />
+        </foreignObject>
+      )}
       <text
         x={node.width / 2}
-        y={node.height / 2 + 10}
+        y={node.height - 8}
         textAnchor="middle"
         fill="var(--text)"
         fontSize={10}

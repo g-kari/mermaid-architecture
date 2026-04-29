@@ -21,6 +21,7 @@
     "check-all": "tsc --noEmit && biome check ."
   },
   "dependencies": {
+    "@iconify/react": "^6.0.2",
     "hono": "^4.7.0",
     "lib0": "^0.2.117",
     "nanoid": "^5.1.9",
