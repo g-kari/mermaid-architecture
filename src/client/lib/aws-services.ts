@@ -9,16 +9,20 @@ export interface AwsServiceDef {
 
 export type AwsCategory =
   | "compute"
+  | "container"
   | "storage"
   | "database"
   | "network"
   | "application"
   | "security"
   | "management"
-  | "analytics";
+  | "analytics"
+  | "devtools"
+  | "ai-ml";
 
 export const AWS_CATEGORIES: Record<AwsCategory, { label: string; color: string }> = {
   compute: { label: "Compute", color: "#ED7100" },
+  container: { label: "Containers", color: "#ED7100" },
   storage: { label: "Storage", color: "#3F8624" },
   database: { label: "Database", color: "#2E27AD" },
   network: { label: "Networking", color: "#8C4FFF" },
@@ -26,6 +30,8 @@ export const AWS_CATEGORIES: Record<AwsCategory, { label: string; color: string 
   security: { label: "Security", color: "#DD344C" },
   management: { label: "Management", color: "#E7157B" },
   analytics: { label: "Analytics", color: "#8C4FFF" },
+  devtools: { label: "Developer Tools", color: "#437DAC" },
+  "ai-ml": { label: "AI / ML", color: "#01A88D" },
 };
 
 export const AWS_SERVICES: AwsServiceDef[] = [
@@ -47,9 +53,43 @@ export const AWS_SERVICES: AwsServiceDef[] = [
     defaultHeight: 80,
   },
   {
+    id: "lightsail",
+    name: "Lightsail",
+    category: "compute",
+    color: "#ED7100",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "batch",
+    name: "Batch",
+    category: "compute",
+    color: "#ED7100",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "elastic-beanstalk",
+    name: "Elastic Beanstalk",
+    category: "compute",
+    color: "#ED7100",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "app-runner",
+    name: "App Runner",
+    category: "compute",
+    color: "#ED7100",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+
+  // Containers
+  {
     id: "ecs",
     name: "ECS",
-    category: "compute",
+    category: "container",
     color: "#ED7100",
     defaultWidth: 80,
     defaultHeight: 80,
@@ -57,15 +97,23 @@ export const AWS_SERVICES: AwsServiceDef[] = [
   {
     id: "ecs-fargate",
     name: "Fargate",
-    category: "compute",
+    category: "container",
     color: "#ED7100",
     defaultWidth: 80,
     defaultHeight: 80,
   },
   {
-    id: "lightsail",
-    name: "Lightsail",
-    category: "compute",
+    id: "eks",
+    name: "EKS",
+    category: "container",
+    color: "#ED7100",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "ecr",
+    name: "ECR",
+    category: "container",
     color: "#ED7100",
     defaultWidth: 80,
     defaultHeight: 80,
@@ -91,6 +139,30 @@ export const AWS_SERVICES: AwsServiceDef[] = [
   {
     id: "ebs",
     name: "EBS",
+    category: "storage",
+    color: "#3F8624",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "glacier",
+    name: "S3 Glacier",
+    category: "storage",
+    color: "#3F8624",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "backup",
+    name: "Backup",
+    category: "storage",
+    color: "#3F8624",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "storage-gateway",
+    name: "Storage Gateway",
     category: "storage",
     color: "#3F8624",
     defaultWidth: 80,
@@ -125,6 +197,46 @@ export const AWS_SERVICES: AwsServiceDef[] = [
   {
     id: "elasticache",
     name: "ElastiCache",
+    category: "database",
+    color: "#2E27AD",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "redshift",
+    name: "Redshift",
+    category: "database",
+    color: "#2E27AD",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "neptune",
+    name: "Neptune",
+    category: "database",
+    color: "#2E27AD",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "documentdb",
+    name: "DocumentDB",
+    category: "database",
+    color: "#2E27AD",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "keyspaces",
+    name: "Keyspaces",
+    category: "database",
+    color: "#2E27AD",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "timestream",
+    name: "Timestream",
     category: "database",
     color: "#2E27AD",
     defaultWidth: 80,
@@ -188,6 +300,30 @@ export const AWS_SERVICES: AwsServiceDef[] = [
     defaultWidth: 80,
     defaultHeight: 80,
   },
+  {
+    id: "direct-connect",
+    name: "Direct Connect",
+    category: "network",
+    color: "#8C4FFF",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "global-accelerator",
+    name: "Global Accelerator",
+    category: "network",
+    color: "#8C4FFF",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "transit-gateway",
+    name: "Transit Gateway",
+    category: "network",
+    color: "#8C4FFF",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
 
   // Application Integration
   {
@@ -217,6 +353,38 @@ export const AWS_SERVICES: AwsServiceDef[] = [
   {
     id: "ses",
     name: "SES",
+    category: "application",
+    color: "#E7157B",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "step-functions",
+    name: "Step Functions",
+    category: "application",
+    color: "#E7157B",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "appsync",
+    name: "AppSync",
+    category: "application",
+    color: "#E7157B",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "mq",
+    name: "MQ",
+    category: "application",
+    color: "#E7157B",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "app-mesh",
+    name: "App Mesh",
     category: "application",
     color: "#E7157B",
     defaultWidth: 80,
@@ -256,6 +424,46 @@ export const AWS_SERVICES: AwsServiceDef[] = [
     defaultWidth: 80,
     defaultHeight: 80,
   },
+  {
+    id: "kms",
+    name: "KMS",
+    category: "security",
+    color: "#DD344C",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "secrets-manager",
+    name: "Secrets Manager",
+    category: "security",
+    color: "#DD344C",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "shield",
+    name: "Shield",
+    category: "security",
+    color: "#DD344C",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "guardduty",
+    name: "GuardDuty",
+    category: "security",
+    color: "#DD344C",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "security-hub",
+    name: "Security Hub",
+    category: "security",
+    color: "#DD344C",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
 
   // Management
   {
@@ -282,6 +490,38 @@ export const AWS_SERVICES: AwsServiceDef[] = [
     defaultWidth: 80,
     defaultHeight: 80,
   },
+  {
+    id: "cloudtrail",
+    name: "CloudTrail",
+    category: "management",
+    color: "#E7157B",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "config",
+    name: "Config",
+    category: "management",
+    color: "#E7157B",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "trusted-advisor",
+    name: "Trusted Advisor",
+    category: "management",
+    color: "#E7157B",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "organizations",
+    name: "Organizations",
+    category: "management",
+    color: "#E7157B",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
 
   // Analytics
   {
@@ -297,6 +537,130 @@ export const AWS_SERVICES: AwsServiceDef[] = [
     name: "Athena",
     category: "analytics",
     color: "#8C4FFF",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "glue",
+    name: "Glue",
+    category: "analytics",
+    color: "#8C4FFF",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "quicksight",
+    name: "QuickSight",
+    category: "analytics",
+    color: "#8C4FFF",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "msk",
+    name: "MSK",
+    category: "analytics",
+    color: "#8C4FFF",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "opensearch",
+    name: "OpenSearch",
+    category: "analytics",
+    color: "#8C4FFF",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "lake-formation",
+    name: "Lake Formation",
+    category: "analytics",
+    color: "#8C4FFF",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "emr",
+    name: "EMR",
+    category: "analytics",
+    color: "#8C4FFF",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+
+  // Developer Tools
+  {
+    id: "codepipeline",
+    name: "CodePipeline",
+    category: "devtools",
+    color: "#437DAC",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "codecommit",
+    name: "CodeCommit",
+    category: "devtools",
+    color: "#437DAC",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "codebuild",
+    name: "CodeBuild",
+    category: "devtools",
+    color: "#437DAC",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "codedeploy",
+    name: "CodeDeploy",
+    category: "devtools",
+    color: "#437DAC",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "codestar",
+    name: "CodeStar",
+    category: "devtools",
+    color: "#437DAC",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "xray",
+    name: "X-Ray",
+    category: "devtools",
+    color: "#437DAC",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "amplify",
+    name: "Amplify",
+    category: "devtools",
+    color: "#437DAC",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+
+  // AI / ML
+  {
+    id: "sagemaker",
+    name: "SageMaker",
+    category: "ai-ml",
+    color: "#01A88D",
+    defaultWidth: 80,
+    defaultHeight: 80,
+  },
+  {
+    id: "bedrock",
+    name: "Bedrock",
+    category: "ai-ml",
+    color: "#01A88D",
     defaultWidth: 80,
     defaultHeight: 80,
   },
