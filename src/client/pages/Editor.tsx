@@ -6,6 +6,7 @@ import Properties from "../components/Properties/Properties";
 import ExportButton from "../components/Toolbar/ExportButton";
 import OnlineUsers from "../components/Toolbar/OnlineUsers";
 import SaveAsTemplate from "../components/Toolbar/SaveAsTemplate";
+import ShortcutHelp from "../components/Toolbar/ShortcutHelp";
 import ThemeToggle from "../components/Toolbar/ThemeToggle";
 import VersionHistory from "../components/VersionHistory/VersionHistory";
 import { api } from "../lib/api";
@@ -35,27 +36,88 @@ export default function Editor() {
     return () => disconnect();
   }, [diagramId, setData, connect, disconnect]);
 
+  const [showShortcuts, setShowShortcuts] = useState(false);
+
   useEffect(() => {
+    const MOVE_STEP = 10;
+    const MOVE_STEP_LARGE = 50;
+    let arrowUndoPushed = false;
+    let arrowTimer: ReturnType<typeof setTimeout> | null = null;
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      const tag = document.activeElement?.tagName;
+      const el = document.activeElement;
+      const tag = el?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      if (el instanceof HTMLElement && el.isContentEditable) return;
       const store = useCanvasStore.getState();
+      const mod = e.ctrlKey || e.metaKey;
+
+      if (e.key === "Escape") {
+        store.deselectAll();
+        setShowShortcuts(false);
+        return;
+      }
+
+      if (e.key === "?" && !mod) {
+        setShowShortcuts((prev) => !prev);
+        return;
+      }
+
       if (e.key === "Delete" || e.key === "Backspace") {
         if (store.selectedNodeId) {
           store.removeNode(store.selectedNodeId);
         } else if (store.selectedEdgeId) {
           store.removeEdge(store.selectedEdgeId);
         }
+        return;
       }
-      if (e.ctrlKey || e.metaKey) {
+
+      if (
+        ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key) &&
+        store.selectedNodeId
+      ) {
+        e.preventDefault();
+        const step = e.shiftKey ? MOVE_STEP_LARGE : MOVE_STEP;
+        const node = store.data.nodes.find((n) => n.id === store.selectedNodeId);
+        if (!node) return;
+        if (!arrowUndoPushed) {
+          store.pushUndo();
+          arrowUndoPushed = true;
+        }
+        if (arrowTimer) clearTimeout(arrowTimer);
+        arrowTimer = setTimeout(() => {
+          arrowUndoPushed = false;
+        }, 500);
+        const dx = e.key === "ArrowLeft" ? -step : e.key === "ArrowRight" ? step : 0;
+        const dy = e.key === "ArrowUp" ? -step : e.key === "ArrowDown" ? step : 0;
+        store.updateNode(node.id, { x: node.x + dx, y: node.y + dy });
+        return;
+      }
+
+      if (mod) {
         if (e.key === "z" && !e.shiftKey) {
           e.preventDefault();
           store.undo();
         } else if ((e.key === "z" && e.shiftKey) || e.key === "y") {
           e.preventDefault();
           store.redo();
-        } else if (e.key === "a") {
+        } else if (e.key === "d") {
           e.preventDefault();
+          if (store.selectedNodeId) {
+            store.duplicateNode(store.selectedNodeId);
+          }
+        } else if (e.key === "e") {
+          e.preventDefault();
+          window.dispatchEvent(new CustomEvent("toggle-export"));
+        } else if (e.key === "=" || e.key === "+") {
+          e.preventDefault();
+          window.dispatchEvent(new CustomEvent("canvas-zoom", { detail: "in" }));
+        } else if (e.key === "-") {
+          e.preventDefault();
+          window.dispatchEvent(new CustomEvent("canvas-zoom", { detail: "out" }));
+        } else if (e.key === "0") {
+          e.preventDefault();
+          window.dispatchEvent(new CustomEvent("canvas-zoom", { detail: "reset" }));
         }
       }
     };
@@ -79,6 +141,13 @@ export default function Editor() {
           <OnlineUsers />
           <ThemeToggle />
           <SaveAsTemplate />
+          <button
+            onClick={() => setShowShortcuts(true)}
+            className="text-sm text-text-secondary hover:text-text px-2 py-1 rounded-md transition-colors"
+            title="キーボードショートカット (?)"
+          >
+            ⌨
+          </button>
           <ExportButton />
         </div>
       </div>
@@ -91,6 +160,8 @@ export default function Editor() {
         </div>
         <Properties />
       </div>
+
+      {showShortcuts && <ShortcutHelp onClose={() => setShowShortcuts(false)} />}
     </div>
   );
 }

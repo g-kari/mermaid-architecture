@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid";
 import { create } from "zustand";
 import type { CanvasData, CanvasEdge, CanvasGroup, CanvasNode } from "../types";
 
@@ -28,6 +29,8 @@ interface CanvasState {
   removeGroup: (id: string) => void;
   selectNode: (id: string | null) => void;
   selectEdge: (id: string | null) => void;
+  deselectAll: () => void;
+  duplicateNode: (id: string) => void;
 }
 
 export const useCanvasStore = create<CanvasState>((set, get) => ({
@@ -143,4 +146,24 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
 
   selectNode: (id) => set({ selectedNodeId: id, selectedEdgeId: null }),
   selectEdge: (id) => set({ selectedEdgeId: id, selectedNodeId: null }),
+
+  deselectAll: () => set({ selectedNodeId: null, selectedEdgeId: null }),
+
+  duplicateNode: (id) => {
+    const node = get().data.nodes.find((n) => n.id === id);
+    if (!node) return;
+    get().pushUndo();
+    const newNode: CanvasNode = {
+      ...node,
+      id: nanoid(8),
+      x: node.x + 20,
+      y: node.y + 20,
+      label: `${node.label} (copy)`,
+    };
+    set((s) => ({
+      data: { ...s.data, nodes: [...s.data.nodes, newNode] },
+      selectedNodeId: newNode.id,
+      selectedEdgeId: null,
+    }));
+  },
 }));

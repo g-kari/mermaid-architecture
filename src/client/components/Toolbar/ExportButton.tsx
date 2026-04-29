@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { canvasDataToDrawio, downloadDrawio } from "../../lib/drawio-generator";
 import { canvasDataToMermaid } from "../../lib/mermaid-generator";
 import { downloadPng, downloadSvg, exportPng, exportSvg } from "../../lib/svg-exporter";
@@ -22,6 +22,12 @@ export default function ExportButton() {
   const [showModal, setShowModal] = useState(false);
   const [activeTab, setActiveTab] = useState<ExportTab>("mermaid");
   const [exporting, setExporting] = useState(false);
+
+  useEffect(() => {
+    const handleToggle = () => setShowModal((prev) => !prev);
+    window.addEventListener("toggle-export", handleToggle);
+    return () => window.removeEventListener("toggle-export", handleToggle);
+  }, []);
 
   const mermaidCode = canvasDataToMermaid(data);
 
