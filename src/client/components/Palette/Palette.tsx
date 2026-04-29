@@ -1,9 +1,9 @@
 import { useState } from "react";
 import {
   AWS_CATEGORIES,
-  getServicesByCategory,
   type AwsCategory,
   type AwsServiceDef,
+  getServicesByCategory,
 } from "../../lib/aws-services";
 
 interface PaletteProps {
@@ -12,7 +12,7 @@ interface PaletteProps {
 
 export default function Palette({ onDragStart }: PaletteProps) {
   const [openCategories, setOpenCategories] = useState<Set<AwsCategory>>(
-    new Set(["compute", "network", "database"])
+    new Set(["compute", "network", "database"]),
   );
   const servicesByCategory = getServicesByCategory();
 
@@ -45,9 +45,7 @@ export default function Palette({ onDragStart }: PaletteProps) {
                   style={{ backgroundColor: color }}
                 />
                 <span className="text-gray-300">{label}</span>
-                <span className="ml-auto text-gray-500 text-xs">
-                  {isOpen ? "−" : "+"}
-                </span>
+                <span className="ml-auto text-gray-500 text-xs">{isOpen ? "−" : "+"}</span>
               </button>
               {isOpen && (
                 <div className="px-2 pb-2 grid grid-cols-2 gap-1">
@@ -56,10 +54,7 @@ export default function Palette({ onDragStart }: PaletteProps) {
                       key={service.id}
                       draggable
                       onDragStart={(e) => {
-                        e.dataTransfer.setData(
-                          "application/json",
-                          JSON.stringify(service)
-                        );
+                        e.dataTransfer.setData("application/json", JSON.stringify(service));
                         onDragStart(service);
                       }}
                       className="flex flex-col items-center gap-1 p-2 rounded cursor-grab hover:bg-gray-700 active:cursor-grabbing transition-colors"
@@ -79,7 +74,7 @@ export default function Palette({ onDragStart }: PaletteProps) {
               )}
             </div>
           );
-        }
+        },
       )}
     </div>
   );

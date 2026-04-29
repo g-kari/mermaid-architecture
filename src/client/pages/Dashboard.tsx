@@ -16,7 +16,16 @@ export default function Dashboard() {
     if (!newName.trim()) return;
     setCreating(true);
     const project = await api.post<Project>("/projects", { name: newName });
-    setProjects((prev) => [{ ...project, owner_id: "", role: "owner", created_at: new Date().toISOString(), updated_at: new Date().toISOString() }, ...prev]);
+    setProjects((prev) => [
+      {
+        ...project,
+        owner_id: "",
+        role: "owner",
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },
+      ...prev,
+    ]);
     setNewName("");
     setCreating(false);
   };
@@ -58,9 +67,7 @@ export default function Dashboard() {
             </Link>
           ))}
           {projects.length === 0 && (
-            <p className="text-gray-500 text-center py-8">
-              プロジェクトがありません
-            </p>
+            <p className="text-gray-500 text-center py-8">プロジェクトがありません</p>
           )}
         </div>
       </div>

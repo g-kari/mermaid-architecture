@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import TemplateSelector from "../components/TemplateSelector/TemplateSelector";
 import { api } from "../lib/api";
 import type { Diagram, Project, Template } from "../types";
-import TemplateSelector from "../components/TemplateSelector/TemplateSelector";
 
 export default function ProjectDetail() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -20,14 +20,11 @@ export default function ProjectDetail() {
   const createFromTemplate = async (template: Template | null) => {
     if (!projectId) return;
     const name = template ? `${template.name} - コピー` : "新しいダイアグラム";
-    const diagram = await api.post<{ id: string }>(
-      `/projects/${projectId}/diagrams`,
-      {
-        name,
-        mermaid_code: template?.mermaid_code ?? undefined,
-        canvas_data: template?.canvas_data ?? undefined,
-      }
-    );
+    const diagram = await api.post<{ id: string }>(`/projects/${projectId}/diagrams`, {
+      name,
+      mermaid_code: template?.mermaid_code ?? undefined,
+      canvas_data: template?.canvas_data ?? undefined,
+    });
     setShowTemplateSelector(false);
     navigate(`/editor/${diagram.id}`);
   };
@@ -37,10 +34,7 @@ export default function ProjectDetail() {
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8">
       <div className="max-w-4xl mx-auto">
-        <Link
-          to="/"
-          className="text-blue-400 hover:text-blue-300 text-sm mb-4 inline-block"
-        >
+        <Link to="/" className="text-blue-400 hover:text-blue-300 text-sm mb-4 inline-block">
           &larr; プロジェクト一覧
         </Link>
         <h1 className="text-3xl font-bold mb-8">{project.name}</h1>
@@ -68,9 +62,7 @@ export default function ProjectDetail() {
             </Link>
           ))}
           {diagrams.length === 0 && (
-            <p className="text-gray-500 text-center py-8">
-              ダイアグラムがありません
-            </p>
+            <p className="text-gray-500 text-center py-8">ダイアグラムがありません</p>
           )}
         </div>
       </div>

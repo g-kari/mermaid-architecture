@@ -1,15 +1,15 @@
-import { Hono } from "hono";
-import { cors } from "hono/cors";
-import { serveStatic } from "hono/cloudflare-workers";
 // @ts-expect-error Workers Sites manifest
 import manifest from "__STATIC_CONTENT_MANIFEST";
+import { Hono } from "hono";
+import { serveStatic } from "hono/cloudflare-workers";
+import { cors } from "hono/cors";
 import { authMiddleware } from "./middleware/auth";
-import type { AppEnv } from "./types";
-import users from "./routes/users";
-import projects from "./routes/projects";
 import diagrams from "./routes/diagrams";
-import templates from "./routes/templates";
+import projects from "./routes/projects";
 import snapshots from "./routes/snapshots";
+import templates from "./routes/templates";
+import users from "./routes/users";
+import type { AppEnv } from "./types";
 
 const app = new Hono<AppEnv>();
 

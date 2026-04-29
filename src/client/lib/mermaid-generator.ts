@@ -4,7 +4,7 @@ export function canvasDataToMermaid(data: CanvasData): string {
   const lines: string[] = ["flowchart TD"];
 
   const topLevelGroups = data.groups.filter(
-    (g) => !data.groups.some((parent) => parent.children.includes(g.id))
+    (g) => !data.groups.some((parent) => parent.children.includes(g.id)),
   );
 
   const nodesInGroups = new Set<string>();
@@ -16,7 +16,7 @@ export function canvasDataToMermaid(data: CanvasData): string {
 
   function renderGroup(group: CanvasGroup, indent: string) {
     lines.push(`${indent}subgraph ${sanitizeId(group.id)}["${escapeLabel(group.label)}"]`);
-    const childIndent = indent + "  ";
+    const childIndent = `${indent}  `;
 
     for (const childId of group.children) {
       const childGroup = data.groups.find((g) => g.id === childId);
@@ -31,7 +31,7 @@ export function canvasDataToMermaid(data: CanvasData): string {
     }
 
     const implicitChildren = data.nodes.filter(
-      (n) => n.group === group.id && !group.children.includes(n.id)
+      (n) => n.group === group.id && !group.children.includes(n.id),
     );
     for (const node of implicitChildren) {
       lines.push(`${childIndent}${sanitizeId(node.id)}["${escapeLabel(node.label)}"]`);
@@ -53,9 +53,7 @@ export function canvasDataToMermaid(data: CanvasData): string {
   for (const edge of data.edges) {
     const arrow = getArrow(edge.style);
     const label = edge.label ? `|${escapeLabel(edge.label)}|` : "";
-    lines.push(
-      `  ${sanitizeId(edge.source)} ${arrow}${label} ${sanitizeId(edge.target)}`
-    );
+    lines.push(`  ${sanitizeId(edge.source)} ${arrow}${label} ${sanitizeId(edge.target)}`);
   }
 
   return lines.join("\n");

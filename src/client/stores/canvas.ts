@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { CanvasData, CanvasNode, CanvasEdge, CanvasGroup } from "../types";
+import type { CanvasData, CanvasEdge, CanvasGroup, CanvasNode } from "../types";
 
 interface CanvasState {
   data: CanvasData;
@@ -26,16 +26,13 @@ export const useCanvasStore = create<CanvasState>((set) => ({
 
   setData: (data) => set({ data }),
 
-  addNode: (node) =>
-    set((s) => ({ data: { ...s.data, nodes: [...s.data.nodes, node] } })),
+  addNode: (node) => set((s) => ({ data: { ...s.data, nodes: [...s.data.nodes, node] } })),
 
   updateNode: (id, updates) =>
     set((s) => ({
       data: {
         ...s.data,
-        nodes: s.data.nodes.map((n) =>
-          n.id === id ? { ...n, ...updates } : n
-        ),
+        nodes: s.data.nodes.map((n) => (n.id === id ? { ...n, ...updates } : n)),
       },
     })),
 
@@ -44,9 +41,7 @@ export const useCanvasStore = create<CanvasState>((set) => ({
       data: {
         ...s.data,
         nodes: s.data.nodes.filter((n) => n.id !== id),
-        edges: s.data.edges.filter(
-          (e) => e.source !== id && e.target !== id
-        ),
+        edges: s.data.edges.filter((e) => e.source !== id && e.target !== id),
         groups: s.data.groups.map((g) => ({
           ...g,
           children: g.children.filter((c) => c !== id),
@@ -55,16 +50,13 @@ export const useCanvasStore = create<CanvasState>((set) => ({
       selectedNodeId: s.selectedNodeId === id ? null : s.selectedNodeId,
     })),
 
-  addEdge: (edge) =>
-    set((s) => ({ data: { ...s.data, edges: [...s.data.edges, edge] } })),
+  addEdge: (edge) => set((s) => ({ data: { ...s.data, edges: [...s.data.edges, edge] } })),
 
   updateEdge: (id, updates) =>
     set((s) => ({
       data: {
         ...s.data,
-        edges: s.data.edges.map((e) =>
-          e.id === id ? { ...e, ...updates } : e
-        ),
+        edges: s.data.edges.map((e) => (e.id === id ? { ...e, ...updates } : e)),
       },
     })),
 
@@ -77,8 +69,7 @@ export const useCanvasStore = create<CanvasState>((set) => ({
       selectedEdgeId: s.selectedEdgeId === id ? null : s.selectedEdgeId,
     })),
 
-  addGroup: (group) =>
-    set((s) => ({ data: { ...s.data, groups: [...s.data.groups, group] } })),
+  addGroup: (group) => set((s) => ({ data: { ...s.data, groups: [...s.data.groups, group] } })),
 
   removeGroup: (id) =>
     set((s) => ({

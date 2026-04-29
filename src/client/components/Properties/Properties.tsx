@@ -1,16 +1,12 @@
-import { useCanvasStore } from "../../stores/canvas";
 import { getServiceDef } from "../../lib/aws-services";
+import { useCanvasStore } from "../../stores/canvas";
 
 export default function Properties() {
   const { data, selectedNodeId, selectedEdgeId, updateNode, updateEdge, removeNode, removeEdge } =
     useCanvasStore();
 
-  const selectedNode = selectedNodeId
-    ? data.nodes.find((n) => n.id === selectedNodeId)
-    : null;
-  const selectedEdge = selectedEdgeId
-    ? data.edges.find((e) => e.id === selectedEdgeId)
-    : null;
+  const selectedNode = selectedNodeId ? data.nodes.find((n) => n.id === selectedNodeId) : null;
+  const selectedEdge = selectedEdgeId ? data.edges.find((e) => e.id === selectedEdgeId) : null;
 
   if (selectedNode) {
     const service = getServiceDef(selectedNode.type);
@@ -36,9 +32,7 @@ export default function Properties() {
             <input
               type="text"
               value={selectedNode.label}
-              onChange={(e) =>
-                updateNode(selectedNode.id, { label: e.target.value })
-              }
+              onChange={(e) => updateNode(selectedNode.id, { label: e.target.value })}
               className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white"
             />
           </div>
@@ -48,9 +42,7 @@ export default function Properties() {
               <input
                 type="number"
                 value={Math.round(selectedNode.x)}
-                onChange={(e) =>
-                  updateNode(selectedNode.id, { x: Number(e.target.value) })
-                }
+                onChange={(e) => updateNode(selectedNode.id, { x: Number(e.target.value) })}
                 className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white"
               />
             </div>
@@ -59,9 +51,7 @@ export default function Properties() {
               <input
                 type="number"
                 value={Math.round(selectedNode.y)}
-                onChange={(e) =>
-                  updateNode(selectedNode.id, { y: Number(e.target.value) })
-                }
+                onChange={(e) => updateNode(selectedNode.id, { y: Number(e.target.value) })}
                 className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white"
               />
             </div>
@@ -96,9 +86,7 @@ export default function Properties() {
             />
           </div>
           <div>
-            <label className="text-xs text-gray-400 block mb-1">
-              スタイル
-            </label>
+            <label className="text-xs text-gray-400 block mb-1">スタイル</label>
             <select
               value={selectedEdge.style || "solid"}
               onChange={(e) =>
@@ -127,9 +115,7 @@ export default function Properties() {
   return (
     <div className="w-64 bg-gray-800 border-l border-gray-700 overflow-y-auto shrink-0 p-3">
       <h2 className="text-sm font-medium text-gray-300 mb-2">プロパティ</h2>
-      <p className="text-gray-500 text-xs">
-        ノードまたはエッジを選択してください
-      </p>
+      <p className="text-gray-500 text-xs">ノードまたはエッジを選択してください</p>
     </div>
   );
 }

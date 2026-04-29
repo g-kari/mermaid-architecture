@@ -1,8 +1,8 @@
-import * as Y from "yjs";
-import * as syncProtocol from "y-protocols/sync";
-import * as awarenessProtocol from "y-protocols/awareness";
-import * as encoding from "lib0/encoding";
 import * as decoding from "lib0/decoding";
+import * as encoding from "lib0/encoding";
+import * as awarenessProtocol from "y-protocols/awareness";
+import * as syncProtocol from "y-protocols/sync";
+import * as Y from "yjs";
 
 const MSG_SYNC = 0;
 const MSG_AWARENESS = 1;
@@ -42,9 +42,7 @@ export class DiagramProvider {
       encoding.writeVarUint(awarenessEncoder, MSG_AWARENESS);
       encoding.writeVarUint8Array(
         awarenessEncoder,
-        awarenessProtocol.encodeAwarenessUpdate(this.awareness, [
-          this.doc.clientID,
-        ])
+        awarenessProtocol.encodeAwarenessUpdate(this.awareness, [this.doc.clientID]),
       );
       this.ws?.send(encoding.toUint8Array(awarenessEncoder));
     };
@@ -68,7 +66,7 @@ export class DiagramProvider {
           awarenessProtocol.applyAwarenessUpdate(
             this.awareness,
             decoding.readVarUint8Array(decoder),
-            this
+            this,
           );
           break;
         }
@@ -101,10 +99,10 @@ export class DiagramProvider {
         encoding.writeVarUint(encoder, MSG_AWARENESS);
         encoding.writeVarUint8Array(
           encoder,
-          awarenessProtocol.encodeAwarenessUpdate(this.awareness, changedClients)
+          awarenessProtocol.encodeAwarenessUpdate(this.awareness, changedClients),
         );
         this.ws?.send(encoding.toUint8Array(encoder));
-      }
+      },
     );
   }
 

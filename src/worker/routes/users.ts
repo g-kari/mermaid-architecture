@@ -5,9 +5,7 @@ const users = new Hono<AppEnv>();
 
 users.get("/me", async (c) => {
   const userId = c.get("userId");
-  const user = await c.env.DB.prepare(
-    "SELECT id, email, name, created_at FROM users WHERE id = ?"
-  )
+  const user = await c.env.DB.prepare("SELECT id, email, name, created_at FROM users WHERE id = ?")
     .bind(userId)
     .first();
   return c.json(user);

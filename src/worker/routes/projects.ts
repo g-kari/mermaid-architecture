@@ -11,7 +11,7 @@ projects.get("/", async (c) => {
      FROM projects p
      JOIN project_members pm ON pm.project_id = p.id
      WHERE pm.user_id = ?
-     ORDER BY p.updated_at DESC`
+     ORDER BY p.updated_at DESC`,
   )
     .bind(userId)
     .all();
@@ -24,11 +24,13 @@ projects.post("/", async (c) => {
   const id = nanoid();
 
   await c.env.DB.batch([
+    c.env.DB.prepare("INSERT INTO projects (id, name, owner_id) VALUES (?, ?, ?)").bind(
+      id,
+      name,
+      userId,
+    ),
     c.env.DB.prepare(
-      "INSERT INTO projects (id, name, owner_id) VALUES (?, ?, ?)"
-    ).bind(id, name, userId),
-    c.env.DB.prepare(
-      "INSERT INTO project_members (project_id, user_id, role) VALUES (?, ?, 'owner')"
+      "INSERT INTO project_members (project_id, user_id, role) VALUES (?, ?, 'owner')",
     ).bind(id, userId),
   ]);
 
@@ -40,7 +42,7 @@ projects.get("/:id", async (c) => {
   const userId = c.get("userId");
 
   const member = await c.env.DB.prepare(
-    "SELECT role FROM project_members WHERE project_id = ? AND user_id = ?"
+    "SELECT role FROM project_members WHERE project_id = ? AND user_id = ?",
   )
     .bind(projectId, userId)
     .first();
@@ -49,9 +51,7 @@ projects.get("/:id", async (c) => {
     return c.json({ error: "Not found" }, 404);
   }
 
-  const project = await c.env.DB.prepare(
-    "SELECT * FROM projects WHERE id = ?"
-  )
+  const project = await c.env.DB.prepare("SELECT * FROM projects WHERE id = ?")
     .bind(projectId)
     .first();
 
@@ -64,7 +64,7 @@ projects.put("/:id", async (c) => {
   const { name } = await c.req.json<{ name: string }>();
 
   const member = await c.env.DB.prepare(
-    "SELECT role FROM project_members WHERE project_id = ? AND user_id = ?"
+    "SELECT role FROM project_members WHERE project_id = ? AND user_id = ?",
   )
     .bind(projectId, userId)
     .first<{ role: string }>();
@@ -73,9 +73,7 @@ projects.put("/:id", async (c) => {
     return c.json({ error: "Forbidden" }, 403);
   }
 
-  await c.env.DB.prepare(
-    "UPDATE projects SET name = ?, updated_at = datetime('now') WHERE id = ?"
-  )
+  await c.env.DB.prepare("UPDATE projects SET name = ?, updated_at = datetime('now') WHERE id = ?")
     .bind(name, projectId)
     .run();
 
@@ -87,7 +85,7 @@ projects.delete("/:id", async (c) => {
   const userId = c.get("userId");
 
   const member = await c.env.DB.prepare(
-    "SELECT role FROM project_members WHERE project_id = ? AND user_id = ?"
+    "SELECT role FROM project_members WHERE project_id = ? AND user_id = ?",
   )
     .bind(projectId, userId)
     .first<{ role: string }>();
@@ -96,9 +94,7 @@ projects.delete("/:id", async (c) => {
     return c.json({ error: "Forbidden" }, 403);
   }
 
-  await c.env.DB.prepare("DELETE FROM projects WHERE id = ?")
-    .bind(projectId)
-    .run();
+  await c.env.DB.prepare("DELETE FROM projects WHERE id = ?").bind(projectId).run();
 
   return c.json({ ok: true });
 });
@@ -112,7 +108,7 @@ projects.post("/:id/members", async (c) => {
   }>();
 
   const member = await c.env.DB.prepare(
-    "SELECT role FROM project_members WHERE project_id = ? AND user_id = ?"
+    "SELECT role FROM project_members WHERE project_id = ? AND user_id = ?",
   )
     .bind(projectId, userId)
     .first<{ role: string }>();
@@ -121,9 +117,7 @@ projects.post("/:id/members", async (c) => {
     return c.json({ error: "Forbidden" }, 403);
   }
 
-  const targetUser = await c.env.DB.prepare(
-    "SELECT id FROM users WHERE email = ?"
-  )
+  const targetUser = await c.env.DB.prepare("SELECT id FROM users WHERE email = ?")
     .bind(email)
     .first<{ id: string }>();
 
@@ -132,7 +126,7 @@ projects.post("/:id/members", async (c) => {
   }
 
   await c.env.DB.prepare(
-    "INSERT OR REPLACE INTO project_members (project_id, user_id, role) VALUES (?, ?, ?)"
+    "INSERT OR REPLACE INTO project_members (project_id, user_id, role) VALUES (?, ?, ?)",
   )
     .bind(projectId, targetUser.id, role)
     .run();

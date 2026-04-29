@@ -5,9 +5,7 @@ export default function OnlineUsers() {
 
   return (
     <div className="flex items-center gap-2">
-      <span
-        className={`w-2 h-2 rounded-full ${connected ? "bg-green-500" : "bg-gray-500"}`}
-      />
+      <span className={`w-2 h-2 rounded-full ${connected ? "bg-green-500" : "bg-gray-500"}`} />
       <div className="flex -space-x-1">
         {onlineUsers.map((user) => (
           <div

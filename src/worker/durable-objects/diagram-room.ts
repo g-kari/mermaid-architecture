@@ -1,8 +1,8 @@
-import * as Y from "yjs";
-import * as syncProtocol from "y-protocols/sync";
-import * as awarenessProtocol from "y-protocols/awareness";
-import * as encoding from "lib0/encoding";
 import * as decoding from "lib0/decoding";
+import * as encoding from "lib0/encoding";
+import * as awarenessProtocol from "y-protocols/awareness";
+import * as syncProtocol from "y-protocols/sync";
+import * as Y from "yjs";
 
 const MSG_SYNC = 0;
 const MSG_AWARENESS = 1;
@@ -100,7 +100,7 @@ export class DiagramRoom implements DurableObject {
         const update = awarenessProtocol.applyAwarenessUpdate(
           this.awareness,
           decoding.readVarUint8Array(decoder),
-          null
+          null,
         );
         void update;
 
@@ -144,9 +144,7 @@ export class DiagramRoom implements DurableObject {
 
   private async loadFromD1() {
     if (!this.diagramId) return;
-    const row = await this.env.DB.prepare(
-      "SELECT yjs_state FROM diagrams WHERE id = ?"
-    )
+    const row = await this.env.DB.prepare("SELECT yjs_state FROM diagrams WHERE id = ?")
       .bind(this.diagramId)
       .first<{ yjs_state: ArrayBuffer | null }>();
 
@@ -162,7 +160,7 @@ export class DiagramRoom implements DurableObject {
 
     const nodesMap = this.doc.getMap("canvas");
     let canvasData: string | null = null;
-    let mermaidCode: string | null = null;
+    const mermaidCode: string | null = null;
 
     if (nodesMap.size > 0) {
       try {
@@ -173,7 +171,7 @@ export class DiagramRoom implements DurableObject {
     }
 
     await this.env.DB.prepare(
-      `UPDATE diagrams SET yjs_state = ?, canvas_data = ?, mermaid_code = ?, updated_at = datetime('now') WHERE id = ?`
+      `UPDATE diagrams SET yjs_state = ?, canvas_data = ?, mermaid_code = ?, updated_at = datetime('now') WHERE id = ?`,
     )
       .bind(state, canvasData, mermaidCode, this.diagramId)
       .run();

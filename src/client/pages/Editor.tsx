@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import Canvas from "../components/Canvas/Canvas";
+import Palette from "../components/Palette/Palette";
+import Properties from "../components/Properties/Properties";
+import ExportButton from "../components/Toolbar/ExportButton";
+import OnlineUsers from "../components/Toolbar/OnlineUsers";
+import SaveAsTemplate from "../components/Toolbar/SaveAsTemplate";
+import VersionHistory from "../components/VersionHistory/VersionHistory";
 import { api } from "../lib/api";
 import { useCanvasStore } from "../stores/canvas";
 import { useCollaborationStore } from "../stores/collaboration";
-import type { Diagram, CanvasData } from "../types";
-import Palette from "../components/Palette/Palette";
-import Canvas from "../components/Canvas/Canvas";
-import Properties from "../components/Properties/Properties";
-import ExportButton from "../components/Toolbar/ExportButton";
-import SaveAsTemplate from "../components/Toolbar/SaveAsTemplate";
-import OnlineUsers from "../components/Toolbar/OnlineUsers";
-import VersionHistory from "../components/VersionHistory/VersionHistory";
+import type { CanvasData, Diagram } from "../types";
 
 export default function Editor() {
   const { diagramId } = useParams<{ diagramId: string }>();
@@ -59,7 +59,10 @@ export default function Editor() {
   return (
     <div className="h-screen bg-gray-900 text-white flex flex-col">
       <div className="h-12 bg-gray-800 border-b border-gray-700 flex items-center px-4 gap-4 shrink-0">
-        <Link to={`/projects/${diagram.project_id}`} className="text-gray-400 hover:text-white text-sm">
+        <Link
+          to={`/projects/${diagram.project_id}`}
+          className="text-gray-400 hover:text-white text-sm"
+        >
           &larr;
         </Link>
         <span className="font-medium">{diagram.name}</span>

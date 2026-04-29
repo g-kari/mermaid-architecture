@@ -16,11 +16,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   custom: "カスタム",
 };
 
-export default function TemplateSelector({
-  isOpen,
-  onClose,
-  onSelect,
-}: TemplateSelectorProps) {
+export default function TemplateSelector({ isOpen, onClose, onSelect }: TemplateSelectorProps) {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>("all");
 
@@ -32,25 +28,17 @@ export default function TemplateSelector({
 
   if (!isOpen) return null;
 
-  const categories = [
-    "all",
-    ...new Set(templates.map((t) => t.category)),
-  ];
+  const categories = ["all", ...new Set(templates.map((t) => t.category))];
 
   const filtered =
-    activeCategory === "all"
-      ? templates
-      : templates.filter((t) => t.category === activeCategory);
+    activeCategory === "all" ? templates : templates.filter((t) => t.category === activeCategory);
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
       <div className="bg-gray-800 rounded-lg border border-gray-700 w-[700px] max-h-[80vh] flex flex-col">
         <div className="flex items-center justify-between p-4 border-b border-gray-700">
           <h2 className="font-medium">テンプレートを選択</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-white"
-          >
+          <button onClick={onClose} className="text-gray-400 hover:text-white">
             &times;
           </button>
         </div>
@@ -86,9 +74,7 @@ export default function TemplateSelector({
               onClick={() => onSelect(template)}
               className="bg-gray-700 border border-gray-600 rounded-lg p-4 hover:border-blue-500 transition-colors text-left"
             >
-              <div className="text-sm font-medium text-gray-200">
-                {template.name}
-              </div>
+              <div className="text-sm font-medium text-gray-200">{template.name}</div>
               {template.description && (
                 <div className="text-xs text-gray-400 mt-1 line-clamp-2">
                   {template.description}

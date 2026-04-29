@@ -8,13 +8,7 @@ interface EdgeProps {
   onSelect: (id: string) => void;
 }
 
-export default function Edge({
-  edge,
-  sourceNode,
-  targetNode,
-  isSelected,
-  onSelect,
-}: EdgeProps) {
+export default function Edge({ edge, sourceNode, targetNode, isSelected, onSelect }: EdgeProps) {
   const sx = sourceNode.x + sourceNode.width / 2;
   const sy = sourceNode.y + sourceNode.height;
   const tx = targetNode.x + targetNode.width / 2;
@@ -22,12 +16,7 @@ export default function Edge({
 
   const midY = (sy + ty) / 2;
 
-  const dashArray =
-    edge.style === "dashed"
-      ? "8,4"
-      : edge.style === "dotted"
-        ? "2,4"
-        : undefined;
+  const dashArray = edge.style === "dashed" ? "8,4" : edge.style === "dotted" ? "2,4" : undefined;
 
   return (
     <g
@@ -52,13 +41,7 @@ export default function Edge({
         markerEnd="url(#arrowhead)"
       />
       {edge.label && (
-        <text
-          x={(sx + tx) / 2}
-          y={midY - 6}
-          textAnchor="middle"
-          fill="#9ca3af"
-          fontSize={10}
-        >
+        <text x={(sx + tx) / 2} y={midY - 6} textAnchor="middle" fill="#9ca3af" fontSize={10}>
           {edge.label}
         </text>
       )}

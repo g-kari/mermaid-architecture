@@ -19,11 +19,7 @@ export default function RemoteCursors({ cursors }: RemoteCursorsProps) {
           transform={`translate(${cursor.x}, ${cursor.y})`}
           pointerEvents="none"
         >
-          <path
-            d="M 0 0 L 0 16 L 4 12 L 8 16 L 8 0 Z"
-            fill={cursor.color}
-            opacity={0.8}
-          />
+          <path d="M 0 0 L 0 16 L 4 12 L 8 16 L 8 0 Z" fill={cursor.color} opacity={0.8} />
           <rect
             x={10}
             y={12}
@@ -33,13 +29,7 @@ export default function RemoteCursors({ cursors }: RemoteCursorsProps) {
             fill={cursor.color}
             opacity={0.9}
           />
-          <text
-            x={14}
-            y={24}
-            fill="white"
-            fontSize={10}
-            fontWeight="bold"
-          >
+          <text x={14} y={24} fill="white" fontSize={10} fontWeight="bold">
             {cursor.name}
           </text>
         </g>

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import type { CanvasNode } from "../../types";
 import { getServiceDef } from "../../lib/aws-services";
+import type { CanvasNode } from "../../types";
 
 interface NodeProps {
   node: CanvasNode;
@@ -49,13 +49,7 @@ export default function Node({
         stroke={isSelected ? "#3b82f6" : color}
         strokeWidth={isSelected ? 2.5 : 1.5}
       />
-      <rect
-        width={node.width}
-        height={24}
-        rx={8}
-        fill={color}
-        opacity={0.9}
-      />
+      <rect width={node.width} height={24} rx={8} fill={color} opacity={0.9} />
       <rect x={0} y={16} width={node.width} height={8} fill={color} opacity={0.9} />
       <text
         x={node.width / 2}

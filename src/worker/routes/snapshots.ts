@@ -11,7 +11,7 @@ snapshots.get("/diagrams/:diagramId/snapshots", async (c) => {
      FROM snapshots s
      LEFT JOIN users u ON u.id = s.created_by
      WHERE s.diagram_id = ?
-     ORDER BY s.created_at DESC`
+     ORDER BY s.created_at DESC`,
   )
     .bind(diagramId)
     .all();
@@ -24,7 +24,7 @@ snapshots.post("/diagrams/:diagramId/snapshots", async (c) => {
   const { label } = await c.req.json<{ label?: string }>();
 
   const diagram = await c.env.DB.prepare(
-    "SELECT mermaid_code, canvas_data FROM diagrams WHERE id = ?"
+    "SELECT mermaid_code, canvas_data FROM diagrams WHERE id = ?",
   )
     .bind(diagramId)
     .first<{ mermaid_code: string; canvas_data: string }>();
@@ -36,7 +36,7 @@ snapshots.post("/diagrams/:diagramId/snapshots", async (c) => {
   const id = nanoid();
   await c.env.DB.prepare(
     `INSERT INTO snapshots (id, diagram_id, mermaid_code, canvas_data, created_by, label)
-     VALUES (?, ?, ?, ?, ?, ?)`
+     VALUES (?, ?, ?, ?, ?, ?)`,
   )
     .bind(id, diagramId, diagram.mermaid_code, diagram.canvas_data, userId, label ?? null)
     .run();
@@ -48,9 +48,7 @@ snapshots.post("/snapshots/:id/restore", async (c) => {
   const snapshotId = c.req.param("id");
   const userId = c.get("userId");
 
-  const snapshot = await c.env.DB.prepare(
-    "SELECT * FROM snapshots WHERE id = ?"
-  )
+  const snapshot = await c.env.DB.prepare("SELECT * FROM snapshots WHERE id = ?")
     .bind(snapshotId)
     .first<{
       id: string;
@@ -66,18 +64,18 @@ snapshots.post("/snapshots/:id/restore", async (c) => {
   const restoreSnapshotId = nanoid();
   await c.env.DB.batch([
     c.env.DB.prepare(
-      `UPDATE diagrams SET mermaid_code = ?, canvas_data = ?, updated_at = datetime('now') WHERE id = ?`
+      `UPDATE diagrams SET mermaid_code = ?, canvas_data = ?, updated_at = datetime('now') WHERE id = ?`,
     ).bind(snapshot.mermaid_code, snapshot.canvas_data, snapshot.diagram_id),
     c.env.DB.prepare(
       `INSERT INTO snapshots (id, diagram_id, mermaid_code, canvas_data, created_by, label)
-       VALUES (?, ?, ?, ?, ?, ?)`
+       VALUES (?, ?, ?, ?, ?, ?)`,
     ).bind(
       restoreSnapshotId,
       snapshot.diagram_id,
       snapshot.mermaid_code,
       snapshot.canvas_data,
       userId,
-      `Restored from ${snapshot.id}`
+      `Restored from ${snapshot.id}`,
     ),
   ]);
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useCanvasStore } from "../../stores/canvas";
-import { canvasDataToMermaid } from "../../lib/mermaid-generator";
 import { api } from "../../lib/api";
+import { canvasDataToMermaid } from "../../lib/mermaid-generator";
+import { useCanvasStore } from "../../stores/canvas";
 
 export default function SaveAsTemplate() {
   const data = useCanvasStore((s) => s.data);
@@ -41,10 +41,7 @@ export default function SaveAsTemplate() {
           <div className="bg-gray-800 rounded-lg border border-gray-700 w-[400px]">
             <div className="flex items-center justify-between p-4 border-b border-gray-700">
               <h2 className="font-medium text-sm">テンプレートとして保存</h2>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="text-gray-400 hover:text-white"
-              >
+              <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white">
                 &times;
               </button>
             </div>
@@ -59,9 +56,7 @@ export default function SaveAsTemplate() {
                 />
               </div>
               <div>
-                <label className="text-xs text-gray-400 block mb-1">
-                  説明（任意）
-                </label>
+                <label className="text-xs text-gray-400 block mb-1">説明（任意）</label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
@@ -70,9 +65,7 @@ export default function SaveAsTemplate() {
                 />
               </div>
               <div>
-                <label className="text-xs text-gray-400 block mb-1">
-                  カテゴリ
-                </label>
+                <label className="text-xs text-gray-400 block mb-1">カテゴリ</label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}

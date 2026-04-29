@@ -10,6 +10,9 @@ AWS構成図をGUIで作成しMermaidコードとしてエクスポートするW
 - **バックエンド**: Cloudflare Workers + Hono + D1 (SQLite)
 - **リアルタイム同期**: Yjs + y-protocols + WebSocket (Durable Objects hibernation API)
 - **認証**: Cloudflare Access JWT（dev時はX-Dev-User-Emailヘッダーでバイパス）
+- **品質管理**: Biome (lint + format) + Vitest (test) + pre-commit
+- **パッケージ管理**: pnpm + devbox
+- **コマンド管理**: just
 
 ## アーキテクチャ
 
@@ -33,26 +36,31 @@ src/client/         — React SPA
 migrations/         — D1 SQLマイグレーション
 ```
 
-## 開発コマンド
+## 開発コマンド（just）
 
 ```bash
-npm run dev              # Vite dev server（ポート5173、/api→8787プロキシ）
-npm run dev:worker       # Wrangler dev server（ポート8787）
-npm run build            # Viteフロントエンドビルド
-npm run deploy           # build + wrangler deploy
-npm run db:migrate:local # D1マイグレーション（ローカル）
-npm run db:migrate       # D1マイグレーション（リモート）
-npm run typecheck        # tsc --noEmit
+just dev              # フロント + Worker 並列起動
+just dev-front        # Vite dev server（ポート5173）
+just dev-worker       # Wrangler dev server（ポート8787）
+just build            # Viteフロントエンドビルド
+just deploy           # build + wrangler deploy
+just lint             # Biome lint
+just lint-fix         # Biome lint 自動修正
+just fmt              # Biome format
+just test             # Vitest
+just check            # typecheck + biome check 全チェック
+just db-migrate-local # D1マイグレーション（ローカル）
+just db-migrate       # D1マイグレーション（リモート）
+just setup            # pre-commit hooks インストール
 ```
-
-※ lint/format/test コマンドは未設定。品質チェックは typecheck のみ。
 
 ## 開発時の注意事項
 
-- dev時は2プロセス必要: `npm run dev`（フロント） + `npm run dev:worker`（API）
+- dev時は `just dev` で2プロセス並列起動（フロント + Worker）
 - Viteは /api/* を localhost:8787 にプロキシ
 - wrangler.toml の DEV_MODE=true で認証バイパス有効
-- D1スキーマ変更後は `npm run db:migrate:local` を忘れずに
+- D1スキーマ変更後は `just db-migrate-local` を忘れずに
 - キャンバスはSVG（HTML Canvasではない）、viewBox制御でパン/ズーム
 - ノード追加は HTML5 Drag and Drop API（dnd-kitではない）
 - DiagramRoom は30秒間隔のalarmでD1にフラッシュ
+- コミット時にpre-commitでBiome + typecheck + testが自動実行される

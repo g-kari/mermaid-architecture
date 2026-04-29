@@ -35,9 +35,7 @@ export async function authMiddleware(c: Context<AppEnv>, next: Next) {
   if (!user) {
     const id = nanoid();
     await db
-      .prepare(
-        "INSERT INTO users (id, email, name) VALUES (?, ?, ?)"
-      )
+      .prepare("INSERT INTO users (id, email, name) VALUES (?, ?, ?)")
       .bind(id, email, email.split("@")[0])
       .run();
     user = { id, email };

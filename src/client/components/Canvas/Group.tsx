@@ -14,9 +14,7 @@ const GROUP_COLORS: Record<string, string> = {
 };
 
 export default function Group({ group, nodes }: GroupProps) {
-  const childNodes = nodes.filter(
-    (n) => n.group === group.id || group.children.includes(n.id)
-  );
+  const childNodes = nodes.filter((n) => n.group === group.id || group.children.includes(n.id));
 
   if (childNodes.length === 0) return null;
 
@@ -53,14 +51,7 @@ export default function Group({ group, nodes }: GroupProps) {
         fill={color}
         opacity={0.15}
       />
-      <text
-        x={minX + 8}
-        y={minY + 18}
-        fill={color}
-        fontSize={11}
-        fontWeight="bold"
-        opacity={0.8}
-      >
+      <text x={minX + 8} y={minY + 18} fill={color} fontSize={11} fontWeight="bold" opacity={0.8}>
         {group.label}
       </text>
     </g>

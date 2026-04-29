@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { api } from "../../lib/api";
-import type { Snapshot, CanvasData } from "../../types";
 import { useCanvasStore } from "../../stores/canvas";
+import type { CanvasData, Snapshot } from "../../types";
 
 interface VersionHistoryProps {
   diagramId: string;
@@ -15,16 +15,14 @@ export default function VersionHistory({ diagramId }: VersionHistoryProps) {
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const setData = useCanvasStore((s) => s.setData);
 
-  const fetchSnapshots = async () => {
-    const list = await api.get<Snapshot[]>(
-      `/diagrams/${diagramId}/snapshots`
-    );
+  const fetchSnapshots = useCallback(async () => {
+    const list = await api.get<Snapshot[]>(`/diagrams/${diagramId}/snapshots`);
     setSnapshots(list);
-  };
+  }, [diagramId]);
 
   useEffect(() => {
     if (isOpen) fetchSnapshots();
-  }, [isOpen, diagramId]);
+  }, [isOpen, fetchSnapshots]);
 
   const saveSnapshot = async () => {
     await api.post(`/diagrams/${diagramId}/snapshots`, {
@@ -112,9 +110,7 @@ export default function VersionHistory({ diagramId }: VersionHistoryProps) {
               className="px-4 py-2 flex items-center gap-3 hover:bg-gray-800 text-xs border-b border-gray-700/50"
             >
               <div className="flex-1 min-w-0">
-                <div className="text-gray-300 truncate">
-                  {snapshot.label || "自動保存"}
-                </div>
+                <div className="text-gray-300 truncate">{snapshot.label || "自動保存"}</div>
                 <div className="text-gray-500">
                   {new Date(snapshot.created_at).toLocaleString("ja-JP")} ・{" "}
                   {snapshot.created_by_email}

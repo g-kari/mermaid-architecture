@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useCanvasStore } from "../../stores/canvas";
 import { canvasDataToMermaid } from "../../lib/mermaid-generator";
+import { useCanvasStore } from "../../stores/canvas";
 
 export default function ExportButton() {
   const data = useCanvasStore((s) => s.data);

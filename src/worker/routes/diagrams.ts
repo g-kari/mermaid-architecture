@@ -9,7 +9,7 @@ diagrams.get("/projects/:projectId/diagrams", async (c) => {
   const userId = c.get("userId");
 
   const member = await c.env.DB.prepare(
-    "SELECT role FROM project_members WHERE project_id = ? AND user_id = ?"
+    "SELECT role FROM project_members WHERE project_id = ? AND user_id = ?",
   )
     .bind(projectId, userId)
     .first();
@@ -20,7 +20,7 @@ diagrams.get("/projects/:projectId/diagrams", async (c) => {
 
   const rows = await c.env.DB.prepare(
     `SELECT id, project_id, name, created_by, created_at, updated_at
-     FROM diagrams WHERE project_id = ? ORDER BY updated_at DESC`
+     FROM diagrams WHERE project_id = ? ORDER BY updated_at DESC`,
   )
     .bind(projectId)
     .all();
@@ -38,7 +38,7 @@ diagrams.post("/projects/:projectId/diagrams", async (c) => {
   }>();
 
   const member = await c.env.DB.prepare(
-    "SELECT role FROM project_members WHERE project_id = ? AND user_id = ?"
+    "SELECT role FROM project_members WHERE project_id = ? AND user_id = ?",
   )
     .bind(projectId, userId)
     .first<{ role: string }>();
@@ -50,7 +50,7 @@ diagrams.post("/projects/:projectId/diagrams", async (c) => {
   const id = nanoid();
   await c.env.DB.prepare(
     `INSERT INTO diagrams (id, project_id, name, mermaid_code, canvas_data, created_by)
-     VALUES (?, ?, ?, ?, ?, ?)`
+     VALUES (?, ?, ?, ?, ?, ?)`,
   )
     .bind(id, projectId, name, mermaid_code ?? null, canvas_data ?? null, userId)
     .run();
@@ -62,9 +62,7 @@ diagrams.get("/diagrams/:id", async (c) => {
   const diagramId = c.req.param("id");
   const userId = c.get("userId");
 
-  const diagram = await c.env.DB.prepare(
-    "SELECT * FROM diagrams WHERE id = ?"
-  )
+  const diagram = await c.env.DB.prepare("SELECT * FROM diagrams WHERE id = ?")
     .bind(diagramId)
     .first();
 
@@ -73,7 +71,7 @@ diagrams.get("/diagrams/:id", async (c) => {
   }
 
   const member = await c.env.DB.prepare(
-    "SELECT role FROM project_members WHERE project_id = ? AND user_id = ?"
+    "SELECT role FROM project_members WHERE project_id = ? AND user_id = ?",
   )
     .bind(diagram.project_id, userId)
     .first();
@@ -94,9 +92,7 @@ diagrams.put("/diagrams/:id", async (c) => {
     canvas_data?: string;
   }>();
 
-  const diagram = await c.env.DB.prepare(
-    "SELECT project_id FROM diagrams WHERE id = ?"
-  )
+  const diagram = await c.env.DB.prepare("SELECT project_id FROM diagrams WHERE id = ?")
     .bind(diagramId)
     .first<{ project_id: string }>();
 
@@ -105,7 +101,7 @@ diagrams.put("/diagrams/:id", async (c) => {
   }
 
   const member = await c.env.DB.prepare(
-    "SELECT role FROM project_members WHERE project_id = ? AND user_id = ?"
+    "SELECT role FROM project_members WHERE project_id = ? AND user_id = ?",
   )
     .bind(diagram.project_id, userId)
     .first<{ role: string }>();
@@ -137,9 +133,7 @@ diagrams.put("/diagrams/:id", async (c) => {
   updates.push("updated_at = datetime('now')");
   values.push(diagramId);
 
-  await c.env.DB.prepare(
-    `UPDATE diagrams SET ${updates.join(", ")} WHERE id = ?`
-  )
+  await c.env.DB.prepare(`UPDATE diagrams SET ${updates.join(", ")} WHERE id = ?`)
     .bind(...values)
     .run();
 
@@ -150,9 +144,7 @@ diagrams.delete("/diagrams/:id", async (c) => {
   const diagramId = c.req.param("id");
   const userId = c.get("userId");
 
-  const diagram = await c.env.DB.prepare(
-    "SELECT project_id FROM diagrams WHERE id = ?"
-  )
+  const diagram = await c.env.DB.prepare("SELECT project_id FROM diagrams WHERE id = ?")
     .bind(diagramId)
     .first<{ project_id: string }>();
 
@@ -161,7 +153,7 @@ diagrams.delete("/diagrams/:id", async (c) => {
   }
 
   const member = await c.env.DB.prepare(
-    "SELECT role FROM project_members WHERE project_id = ? AND user_id = ?"
+    "SELECT role FROM project_members WHERE project_id = ? AND user_id = ?",
   )
     .bind(diagram.project_id, userId)
     .first<{ role: string }>();
@@ -170,9 +162,7 @@ diagrams.delete("/diagrams/:id", async (c) => {
     return c.json({ error: "Forbidden" }, 403);
   }
 
-  await c.env.DB.prepare("DELETE FROM diagrams WHERE id = ?")
-    .bind(diagramId)
-    .run();
+  await c.env.DB.prepare("DELETE FROM diagrams WHERE id = ?").bind(diagramId).run();
 
   return c.json({ ok: true });
 });

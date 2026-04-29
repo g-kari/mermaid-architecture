@@ -1,16 +1,24 @@
-import { useCallback, useRef, useState } from "react";
 import { nanoid } from "nanoid";
-import { useCanvasStore } from "../../stores/canvas";
+import { useCallback, useRef, useState } from "react";
 import type { AwsServiceDef } from "../../lib/aws-services";
+import { useCanvasStore } from "../../stores/canvas";
 import type { CanvasNode } from "../../types";
-import NodeComponent from "./Node";
 import EdgeComponent from "./Edge";
-import Group from "./Group";
 import EdgeCreator from "./EdgeCreator";
+import Group from "./Group";
+import NodeComponent from "./Node";
 
 export default function Canvas() {
-  const { data, selectedNodeId, selectedEdgeId, addNode, addEdge, updateNode, selectNode, selectEdge } =
-    useCanvasStore();
+  const {
+    data,
+    selectedNodeId,
+    selectedEdgeId,
+    addNode,
+    addEdge,
+    updateNode,
+    selectNode,
+    selectEdge,
+  } = useCanvasStore();
 
   const svgRef = useRef<SVGSVGElement>(null);
   const [viewBox, setViewBox] = useState({ x: 0, y: 0, w: 1200, h: 800 });
@@ -33,7 +41,7 @@ export default function Canvas() {
         y: viewBox.y + ((clientY - rect.top) / rect.height) * viewBox.h,
       };
     },
-    [viewBox]
+    [viewBox],
   );
 
   const handleDrop = useCallback(
@@ -54,7 +62,7 @@ export default function Canvas() {
       };
       addNode(node);
     },
-    [addNode, svgPoint]
+    [addNode, svgPoint],
   );
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -176,18 +184,8 @@ export default function Canvas() {
           >
             <polygon points="0 0, 10 3.5, 0 7" fill="#6b7280" />
           </marker>
-          <pattern
-            id="grid"
-            width="20"
-            height="20"
-            patternUnits="userSpaceOnUse"
-          >
-            <path
-              d="M 20 0 L 0 0 0 20"
-              fill="none"
-              stroke="#1f2937"
-              strokeWidth="0.5"
-            />
+          <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2937" strokeWidth="0.5" />
           </pattern>
         </defs>
 
