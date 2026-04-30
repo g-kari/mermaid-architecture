@@ -55,6 +55,7 @@ export interface CanvasNode {
   width: number;
   height: number;
   group?: string;
+  specs?: Record<string, string>;
 }
 
 export interface CanvasEdge {

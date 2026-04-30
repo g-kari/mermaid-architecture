@@ -1,5 +1,5 @@
 import type { CanvasData, CanvasEdge, CanvasGroup, CanvasNode } from "../types";
-import { AWS_CATEGORIES, type AwsCategory, getServiceDef } from "./aws-services";
+import { AWS_CATEGORIES, type AwsCategory, getServiceDef, type SpecFieldDef } from "./aws-services";
 
 export function canvasDataToMarkdown(data: CanvasData): string {
   if (data.nodes.length === 0 && data.groups.length === 0) {
@@ -49,25 +49,27 @@ function appendResourceTable(lines: string[], data: CanvasData) {
 
     const catLabel = AWS_CATEGORIES[cat].label;
     lines.push(`### ${catLabel}`, "");
-    lines.push("| リソース名 | サービス | 所属グループ |");
-    lines.push("|-----------|---------|------------|");
+    lines.push("| リソース名 | サービス | 所属グループ | スペック |");
+    lines.push("|-----------|---------|------------|---------|");
 
     for (const node of nodes) {
       const def = getServiceDef(node.type);
       const serviceName = def?.name ?? node.type;
       const groupLabel = findParentGroupLabel(node, data);
-      lines.push(`| ${node.label} | ${serviceName} | ${groupLabel} |`);
+      const specStr = formatSpecs(node.specs, def?.specFields);
+      lines.push(`| ${node.label} | ${serviceName} | ${groupLabel} | ${specStr} |`);
     }
     lines.push("");
   }
 
   if (ungrouped.length > 0) {
     lines.push("### その他", "");
-    lines.push("| リソース名 | タイプ | 所属グループ |");
-    lines.push("|-----------|-------|------------|");
+    lines.push("| リソース名 | タイプ | 所属グループ | スペック |");
+    lines.push("|-----------|-------|------------|---------|");
     for (const node of ungrouped) {
       const groupLabel = findParentGroupLabel(node, data);
-      lines.push(`| ${node.label} | ${node.type} | ${groupLabel} |`);
+      const specStr = formatSpecs(node.specs);
+      lines.push(`| ${node.label} | ${node.type} | ${groupLabel} | ${specStr} |`);
     }
     lines.push("");
   }
@@ -137,6 +139,17 @@ function appendConnections(lines: string[], data: CanvasData) {
     lines.push(`| ${source} | ${target} | ${label} | ${style} |`);
   }
   lines.push("");
+}
+
+function formatSpecs(specs?: Record<string, string>, specFields?: SpecFieldDef[]): string {
+  if (!specs) return "-";
+  const pairs = Object.entries(specs)
+    .filter(([, v]) => v !== "")
+    .map(([k, v]) => {
+      const label = specFields?.find((f) => f.key === k)?.label ?? k;
+      return `${label}: ${v}`;
+    });
+  return pairs.length > 0 ? pairs.join(", ") : "-";
 }
 
 function findParentGroupLabel(node: CanvasNode, data: CanvasData): string {

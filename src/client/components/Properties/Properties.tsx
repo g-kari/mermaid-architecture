@@ -63,6 +63,35 @@ export default function Properties() {
               className="w-full bg-bg-hover border border-border-strong rounded-md px-2 py-1 text-sm text-text"
             />
           </div>
+          {service?.specFields && service.specFields.length > 0 && (
+            <details open className="group">
+              <summary className="text-xs font-medium text-text-secondary cursor-pointer select-none flex items-center gap-1 mb-2">
+                <span className="transition-transform group-open:rotate-90">▶</span>
+                スペック
+              </summary>
+              <div className="space-y-2">
+                {service.specFields.map((field) => (
+                  <div key={field.key}>
+                    <label className="text-xs text-text-secondary block mb-1">{field.label}</label>
+                    <input
+                      type="text"
+                      value={selectedNode.specs?.[field.key] || ""}
+                      placeholder={field.placeholder}
+                      onChange={(e) =>
+                        updateNode(selectedNode.id, {
+                          specs: {
+                            ...selectedNode.specs,
+                            [field.key]: e.target.value,
+                          },
+                        })
+                      }
+                      className="w-full bg-bg-hover border border-border-strong rounded-md px-2 py-1 text-sm text-text"
+                    />
+                  </div>
+                ))}
+              </div>
+            </details>
+          )}
           <div className="grid grid-cols-2 gap-2">
             <div>
               <label className="text-xs text-text-secondary block mb-1">X</label>
