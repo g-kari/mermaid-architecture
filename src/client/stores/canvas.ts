@@ -194,6 +194,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
       x: node.x + 20,
       y: node.y + 20,
       label: `${node.label} (copy)`,
+      specs: node.specs ? { ...node.specs } : undefined,
     };
     set((s) => ({
       data: { ...s.data, nodes: [...s.data.nodes, newNode] },

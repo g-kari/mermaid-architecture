@@ -1,4 +1,13 @@
-import type { CanvasData, CanvasGroup } from "../types";
+import type { CanvasData, CanvasGroup, CanvasNode } from "../types";
+
+function formatSpecComment(node: CanvasNode, indent: string): string | null {
+  if (!node.specs) return null;
+  const pairs = Object.entries(node.specs)
+    .filter(([, v]) => v !== "")
+    .map(([k, v]) => `${k}=${v}`);
+  if (pairs.length === 0) return null;
+  return `${indent}%% specs: ${pairs.join(", ")}`;
+}
 
 export function canvasDataToMermaid(data: CanvasData): string {
   const lines: string[] = ["flowchart TD"];
@@ -27,6 +36,8 @@ export function canvasDataToMermaid(data: CanvasData): string {
       const node = data.nodes.find((n) => n.id === childId);
       if (node) {
         lines.push(`${childIndent}${sanitizeId(node.id)}["${escapeLabel(node.label)}"]`);
+        const specComment = formatSpecComment(node, childIndent);
+        if (specComment) lines.push(specComment);
       }
     }
 
@@ -35,6 +46,8 @@ export function canvasDataToMermaid(data: CanvasData): string {
     );
     for (const node of implicitChildren) {
       lines.push(`${childIndent}${sanitizeId(node.id)}["${escapeLabel(node.label)}"]`);
+      const specComment = formatSpecComment(node, childIndent);
+      if (specComment) lines.push(specComment);
     }
 
     lines.push(`${indent}end`);
@@ -47,6 +60,8 @@ export function canvasDataToMermaid(data: CanvasData): string {
   for (const node of data.nodes) {
     if (!nodesInGroups.has(node.id) && !node.group) {
       lines.push(`  ${sanitizeId(node.id)}["${escapeLabel(node.label)}"]`);
+      const specComment = formatSpecComment(node, "  ");
+      if (specComment) lines.push(specComment);
     }
   }
 
