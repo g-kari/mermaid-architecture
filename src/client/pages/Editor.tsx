@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Canvas from "../components/Canvas/Canvas";
+import CostPanel from "../components/CostPanel/CostPanel";
 import Palette from "../components/Palette/Palette";
 import Properties from "../components/Properties/Properties";
+import CostToggle from "../components/Toolbar/CostToggle";
 import ExportButton from "../components/Toolbar/ExportButton";
 import ImportButton from "../components/Toolbar/ImportButton";
 import OnlineUsers from "../components/Toolbar/OnlineUsers";
@@ -38,6 +40,7 @@ export default function Editor() {
   }, [diagramId, setData, connect, disconnect]);
 
   const [showShortcuts, setShowShortcuts] = useState(false);
+  const [showCostPanel, setShowCostPanel] = useState(false);
 
   useEffect(() => {
     const MOVE_STEP = 10;
@@ -157,6 +160,7 @@ export default function Editor() {
           >
             ⌨
           </button>
+          <CostToggle active={showCostPanel} onClick={() => setShowCostPanel((v) => !v)} />
           <ImportButton />
           <ExportButton />
         </div>
@@ -169,6 +173,7 @@ export default function Editor() {
           <VersionHistory diagramId={diagramId!} />
         </div>
         <Properties />
+        {showCostPanel && <CostPanel onClose={() => setShowCostPanel(false)} />}
       </div>
 
       {showShortcuts && <ShortcutHelp onClose={() => setShowShortcuts(false)} />}
