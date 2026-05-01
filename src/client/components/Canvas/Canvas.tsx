@@ -2,13 +2,57 @@ import { nanoid } from "nanoid";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { AwsServiceDef, GroupTypeDef } from "../../lib/aws-services";
 import { useCanvasStore } from "../../stores/canvas";
-import type { CanvasNode } from "../../types";
+import type { CanvasGroup, CanvasNode } from "../../types";
 import EdgeComponent from "./Edge";
 import EdgeCreator from "./EdgeCreator";
-import Group from "./Group";
+import Group, { GROUP_HEADER_HEIGHT, GROUP_PADDING } from "./Group";
 import NodeComponent from "./Node";
 
 const DEFAULT_VIEWBOX = { x: 0, y: 0, w: 1200, h: 800 };
+
+function findTargetGroup(
+  cx: number,
+  cy: number,
+  groups: CanvasGroup[],
+  nodes: CanvasNode[],
+  excludeNodeId?: string,
+): string | undefined {
+  let targetGroupId: string | undefined;
+  let targetArea = Number.POSITIVE_INFINITY;
+
+  for (const group of groups) {
+    const childNodes = nodes.filter(
+      (n) => n.id !== excludeNodeId && (n.group === group.id || group.children.includes(n.id)),
+    );
+    let gx: number;
+    let gy: number;
+    let gx2: number;
+    let gy2: number;
+    if (childNodes.length > 0) {
+      gx = Math.min(...childNodes.map((n) => n.x)) - GROUP_PADDING;
+      gy = Math.min(...childNodes.map((n) => n.y)) - GROUP_PADDING - GROUP_HEADER_HEIGHT;
+      gx2 = Math.max(...childNodes.map((n) => n.x + n.width)) + GROUP_PADDING;
+      gy2 = Math.max(...childNodes.map((n) => n.y + n.height)) + GROUP_PADDING;
+    } else if (group.x != null && group.y != null) {
+      gx = group.x;
+      gy = group.y;
+      gx2 = group.x + (group.width ?? 300);
+      gy2 = group.y + (group.height ?? 200);
+    } else {
+      continue;
+    }
+
+    if (cx >= gx && cx <= gx2 && cy >= gy && cy <= gy2) {
+      const area = (gx2 - gx) * (gy2 - gy);
+      if (area < targetArea) {
+        targetGroupId = group.id;
+        targetArea = area;
+      }
+    }
+  }
+
+  return targetGroupId;
+}
 
 export default function Canvas() {
   const {
@@ -20,7 +64,7 @@ export default function Canvas() {
     addGroup,
     addEdge,
     updateNode,
-    updateGroup,
+    reassignNodeGroup,
     moveGroupChildren,
     pushUndo,
     selectNode,
@@ -82,6 +126,8 @@ export default function Canvas() {
       if (raw) {
         const service = JSON.parse(raw) as AwsServiceDef;
         const pos = svgPoint(e.clientX, e.clientY);
+        const { data: currentData } = useCanvasStore.getState();
+        const targetGroupId = findTargetGroup(pos.x, pos.y, currentData.groups, currentData.nodes);
         const node: CanvasNode = {
           id: nanoid(8),
           type: service.id,
@@ -90,6 +136,7 @@ export default function Canvas() {
           y: pos.y - service.defaultHeight / 2,
           width: service.defaultWidth,
           height: service.defaultHeight,
+          group: targetGroupId,
         };
         addNode(node);
         return;
@@ -99,6 +146,8 @@ export default function Canvas() {
       if (!file) return;
 
       const pos = svgPoint(e.clientX, e.clientY);
+      const { data: currentData } = useCanvasStore.getState();
+      const targetGroupId = findTargetGroup(pos.x, pos.y, currentData.groups, currentData.nodes);
       const reader = new FileReader();
       reader.onload = () => {
         const node: CanvasNode = {
@@ -110,6 +159,7 @@ export default function Canvas() {
           width: 120,
           height: 120,
           imageDataUrl: reader.result as string,
+          group: targetGroupId,
         };
         addNode(node);
       };
@@ -173,49 +223,10 @@ export default function Canvas() {
       if (node) {
         const cx = node.x + node.width / 2;
         const cy = node.y + node.height / 2;
-        let targetGroupId: string | undefined;
-        let targetArea = Number.POSITIVE_INFINITY;
-
-        for (const group of data.groups) {
-          const childNodes = data.nodes.filter(
-            (n) =>
-              n.id !== draggingNodeId && (n.group === group.id || group.children.includes(n.id)),
-          );
-          let gx: number;
-          let gy: number;
-          let gx2: number;
-          let gy2: number;
-          if (childNodes.length > 0) {
-            gx = Math.min(...childNodes.map((n) => n.x)) - 24;
-            gy = Math.min(...childNodes.map((n) => n.y)) - 52;
-            gx2 = Math.max(...childNodes.map((n) => n.x + n.width)) + 24;
-            gy2 = Math.max(...childNodes.map((n) => n.y + n.height)) + 24;
-          } else if (group.x != null && group.y != null) {
-            gx = group.x;
-            gy = group.y;
-            gx2 = group.x + (group.width ?? 300);
-            gy2 = group.y + (group.height ?? 200);
-          } else {
-            continue;
-          }
-
-          if (cx >= gx && cx <= gx2 && cy >= gy && cy <= gy2) {
-            const area = (gx2 - gx) * (gy2 - gy);
-            if (area < targetArea) {
-              targetGroupId = group.id;
-              targetArea = area;
-            }
-          }
-        }
+        const targetGroupId = findTargetGroup(cx, cy, data.groups, data.nodes, draggingNodeId);
 
         if (node.group !== targetGroupId) {
-          const oldGroup = node.group ? data.groups.find((g) => g.id === node.group) : undefined;
-          if (oldGroup?.children.includes(draggingNodeId)) {
-            updateGroup(oldGroup.id, {
-              children: oldGroup.children.filter((c) => c !== draggingNodeId),
-            });
-          }
-          updateNode(draggingNodeId, { group: targetGroupId });
+          reassignNodeGroup(draggingNodeId, targetGroupId);
         }
       }
     }

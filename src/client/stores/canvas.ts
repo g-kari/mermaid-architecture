@@ -29,6 +29,7 @@ interface CanvasState {
   addGroup: (group: CanvasGroup) => void;
   updateGroup: (id: string, updates: Partial<CanvasGroup>) => void;
   removeGroup: (id: string) => void;
+  reassignNodeGroup: (nodeId: string, newGroupId: string | undefined) => void;
   moveGroupChildren: (groupId: string, dx: number, dy: number) => void;
   selectNode: (id: string | null) => void;
   selectEdge: (id: string | null) => void;
@@ -83,7 +84,19 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
 
   addNode: (node) => {
     get().pushUndo();
-    set((s) => ({ data: { ...s.data, nodes: [...s.data.nodes, node] } }));
+    set((s) => ({
+      data: {
+        ...s.data,
+        nodes: [...s.data.nodes, node],
+        groups: node.group
+          ? s.data.groups.map((g) =>
+              g.id === node.group && !g.children.includes(node.id)
+                ? { ...g, children: [...g.children, node.id] }
+                : g,
+            )
+          : s.data.groups,
+      },
+    }));
   },
 
   updateNode: (id, updates) =>
@@ -160,6 +173,25 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
         nodes: s.data.nodes.map((n) => (n.group === id ? { ...n, group: undefined } : n)),
       },
       selectedGroupId: s.selectedGroupId === id ? null : s.selectedGroupId,
+    }));
+  },
+
+  reassignNodeGroup: (nodeId, newGroupId) => {
+    set((s) => ({
+      data: {
+        ...s.data,
+        nodes: s.data.nodes.map((n) => (n.id === nodeId ? { ...n, group: newGroupId } : n)),
+        groups: s.data.groups.map((g) => {
+          const inChildren = g.children.includes(nodeId);
+          if (g.id === newGroupId && !inChildren) {
+            return { ...g, children: [...g.children, nodeId] };
+          }
+          if (g.id !== newGroupId && inChildren) {
+            return { ...g, children: g.children.filter((c) => c !== nodeId) };
+          }
+          return g;
+        }),
+      },
     }));
   },
 
