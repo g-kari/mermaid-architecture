@@ -4,6 +4,7 @@ import Canvas from "../components/Canvas/Canvas";
 import Palette from "../components/Palette/Palette";
 import Properties from "../components/Properties/Properties";
 import ExportButton from "../components/Toolbar/ExportButton";
+import ImportButton from "../components/Toolbar/ImportButton";
 import OnlineUsers from "../components/Toolbar/OnlineUsers";
 import SaveAsTemplate from "../components/Toolbar/SaveAsTemplate";
 import ShortcutHelp from "../components/Toolbar/ShortcutHelp";
@@ -114,6 +115,9 @@ export default function Editor() {
         } else if (e.key === "e") {
           e.preventDefault();
           window.dispatchEvent(new CustomEvent("toggle-export"));
+        } else if (e.key === "i") {
+          e.preventDefault();
+          window.dispatchEvent(new CustomEvent("toggle-import"));
         } else if (e.key === "=" || e.key === "+") {
           e.preventDefault();
           window.dispatchEvent(new CustomEvent("canvas-zoom", { detail: "in" }));
@@ -153,6 +157,7 @@ export default function Editor() {
           >
             ⌨
           </button>
+          <ImportButton />
           <ExportButton />
         </div>
       </div>
