@@ -16,11 +16,14 @@ const GROUP_COLORS: Record<string, string> = {
   generic: "#6b7280",
 };
 
+export const GROUP_PADDING = 24;
+export const GROUP_HEADER_HEIGHT = 28;
+
 export default function Group({ group, nodes, isSelected, onSelect, onDragStart }: GroupProps) {
   const childNodes = nodes.filter((n) => n.group === group.id || group.children.includes(n.id));
 
-  const padding = 24;
-  const headerHeight = 28;
+  const padding = GROUP_PADDING;
+  const headerHeight = GROUP_HEADER_HEIGHT;
 
   let minX: number;
   let minY: number;
