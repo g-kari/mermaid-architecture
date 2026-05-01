@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { AwsServiceDef } from "../../lib/aws-services";
+import type { AwsServiceDef, GroupTypeDef } from "../../lib/aws-services";
 import { useCanvasStore } from "../../stores/canvas";
 import type { CanvasNode } from "../../types";
 import EdgeComponent from "./Edge";
@@ -17,8 +17,10 @@ export default function Canvas() {
     selectedEdgeId,
     selectedGroupId,
     addNode,
+    addGroup,
     addEdge,
     updateNode,
+    updateGroup,
     moveGroupChildren,
     pushUndo,
     selectNode,
@@ -58,6 +60,24 @@ export default function Canvas() {
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
+
+      const groupRaw = e.dataTransfer.getData("application/x-canvas-group");
+      if (groupRaw) {
+        const gt = JSON.parse(groupRaw) as GroupTypeDef;
+        const pos = svgPoint(e.clientX, e.clientY);
+        addGroup({
+          id: nanoid(8),
+          type: gt.type,
+          label: gt.label,
+          children: [],
+          x: pos.x - gt.defaultWidth / 2,
+          y: pos.y - gt.defaultHeight / 2,
+          width: gt.defaultWidth,
+          height: gt.defaultHeight,
+        });
+        return;
+      }
+
       const raw = e.dataTransfer.getData("application/json");
       if (raw) {
         const service = JSON.parse(raw) as AwsServiceDef;
@@ -95,7 +115,7 @@ export default function Canvas() {
       };
       reader.readAsDataURL(file);
     },
-    [addNode, svgPoint],
+    [addNode, addGroup, svgPoint],
   );
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -148,6 +168,57 @@ export default function Canvas() {
   };
 
   const handleMouseUp = () => {
+    if (draggingNodeId) {
+      const node = data.nodes.find((n) => n.id === draggingNodeId);
+      if (node) {
+        const cx = node.x + node.width / 2;
+        const cy = node.y + node.height / 2;
+        let targetGroupId: string | undefined;
+        let targetArea = Number.POSITIVE_INFINITY;
+
+        for (const group of data.groups) {
+          const childNodes = data.nodes.filter(
+            (n) =>
+              n.id !== draggingNodeId && (n.group === group.id || group.children.includes(n.id)),
+          );
+          let gx: number;
+          let gy: number;
+          let gx2: number;
+          let gy2: number;
+          if (childNodes.length > 0) {
+            gx = Math.min(...childNodes.map((n) => n.x)) - 24;
+            gy = Math.min(...childNodes.map((n) => n.y)) - 52;
+            gx2 = Math.max(...childNodes.map((n) => n.x + n.width)) + 24;
+            gy2 = Math.max(...childNodes.map((n) => n.y + n.height)) + 24;
+          } else if (group.x != null && group.y != null) {
+            gx = group.x;
+            gy = group.y;
+            gx2 = group.x + (group.width ?? 300);
+            gy2 = group.y + (group.height ?? 200);
+          } else {
+            continue;
+          }
+
+          if (cx >= gx && cx <= gx2 && cy >= gy && cy <= gy2) {
+            const area = (gx2 - gx) * (gy2 - gy);
+            if (area < targetArea) {
+              targetGroupId = group.id;
+              targetArea = area;
+            }
+          }
+        }
+
+        if (node.group !== targetGroupId) {
+          const oldGroup = node.group ? data.groups.find((g) => g.id === node.group) : undefined;
+          if (oldGroup?.children.includes(draggingNodeId)) {
+            updateGroup(oldGroup.id, {
+              children: oldGroup.children.filter((c) => c !== draggingNodeId),
+            });
+          }
+          updateNode(draggingNodeId, { group: targetGroupId });
+        }
+      }
+    }
     setIsPanning(false);
     setDraggingNodeId(null);
     setDraggingGroupId(null);

@@ -174,6 +174,9 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
             ? { ...n, x: n.x + dx, y: n.y + dy }
             : n,
         ),
+        groups: s.data.groups.map((g) =>
+          g.id === groupId && g.x != null && g.y != null ? { ...g, x: g.x + dx, y: g.y + dy } : g,
+        ),
       },
     }));
   },

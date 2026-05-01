@@ -830,6 +830,27 @@ export const AWS_SERVICES: AwsServiceDef[] = [
   },
 ];
 
+export interface GroupTypeDef {
+  type: string;
+  label: string;
+  color: string;
+  defaultWidth: number;
+  defaultHeight: number;
+}
+
+export const GROUP_TYPES: GroupTypeDef[] = [
+  { type: "vpc", label: "VPC", color: "#8C4FFF", defaultWidth: 400, defaultHeight: 300 },
+  { type: "subnet", label: "Subnet", color: "#3F8624", defaultWidth: 300, defaultHeight: 200 },
+  {
+    type: "az",
+    label: "Availability Zone",
+    color: "#ED7100",
+    defaultWidth: 450,
+    defaultHeight: 350,
+  },
+  { type: "region", label: "Region", color: "#2E27AD", defaultWidth: 500, defaultHeight: 400 },
+];
+
 export function getServiceDef(type: string): AwsServiceDef | undefined {
   return AWS_SERVICES.find((s) => s.id === type);
 }
