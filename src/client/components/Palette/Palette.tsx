@@ -81,6 +81,35 @@ export default function Palette({ onDragStart }: PaletteProps) {
           );
         },
       )}
+      <div className="p-3 border-t border-border">
+        <button
+          onClick={() => {
+            const input = document.createElement("input");
+            input.type = "file";
+            input.accept = "image/*";
+            input.onchange = () => {
+              const file = input.files?.[0];
+              if (!file) return;
+              const reader = new FileReader();
+              reader.onload = () => {
+                if (typeof reader.result === "string") {
+                  window.dispatchEvent(
+                    new CustomEvent("add-custom-image", {
+                      detail: { dataUrl: reader.result, name: file.name.replace(/\.[^.]+$/, "") },
+                    }),
+                  );
+                }
+              };
+              reader.readAsDataURL(file);
+            };
+            input.click();
+          }}
+          className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm rounded-md bg-bg-hover hover:bg-bg text-text-secondary hover:text-text transition-colors"
+        >
+          <span>🖼</span>
+          <span>画像を追加</span>
+        </button>
+      </div>
     </div>
   );
 }

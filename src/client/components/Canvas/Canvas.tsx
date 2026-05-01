@@ -28,6 +28,8 @@ export default function Canvas() {
 
   const svgRef = useRef<SVGSVGElement>(null);
   const [viewBox, setViewBox] = useState({ x: 0, y: 0, w: 1200, h: 800 });
+  const viewBoxRef = useRef(viewBox);
+  viewBoxRef.current = viewBox;
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState({ x: 0, y: 0 });
 
@@ -57,19 +59,41 @@ export default function Canvas() {
     (e: React.DragEvent) => {
       e.preventDefault();
       const raw = e.dataTransfer.getData("application/json");
-      if (!raw) return;
-      const service = JSON.parse(raw) as AwsServiceDef;
+      if (raw) {
+        const service = JSON.parse(raw) as AwsServiceDef;
+        const pos = svgPoint(e.clientX, e.clientY);
+        const node: CanvasNode = {
+          id: nanoid(8),
+          type: service.id,
+          label: service.name,
+          x: pos.x - service.defaultWidth / 2,
+          y: pos.y - service.defaultHeight / 2,
+          width: service.defaultWidth,
+          height: service.defaultHeight,
+        };
+        addNode(node);
+        return;
+      }
+
+      const file = Array.from(e.dataTransfer.files).find((f) => f.type.startsWith("image/"));
+      if (!file) return;
+
       const pos = svgPoint(e.clientX, e.clientY);
-      const node: CanvasNode = {
-        id: nanoid(8),
-        type: service.id,
-        label: service.name,
-        x: pos.x - service.defaultWidth / 2,
-        y: pos.y - service.defaultHeight / 2,
-        width: service.defaultWidth,
-        height: service.defaultHeight,
+      const reader = new FileReader();
+      reader.onload = () => {
+        const node: CanvasNode = {
+          id: nanoid(8),
+          type: "custom-image",
+          label: file.name.replace(/\.[^.]+$/, ""),
+          x: pos.x - 60,
+          y: pos.y - 60,
+          width: 120,
+          height: 120,
+          imageDataUrl: reader.result as string,
+        };
+        addNode(node);
       };
-      addNode(node);
+      reader.readAsDataURL(file);
     },
     [addNode, svgPoint],
   );
@@ -204,8 +228,29 @@ export default function Canvas() {
         return { x: cx - newW / 2, y: cy - newH / 2, w: newW, h: newH };
       });
     };
+    const handleAddCustomImage = (e: Event) => {
+      const { dataUrl, name } = (e as CustomEvent<{ dataUrl: string; name: string }>).detail;
+      const store = useCanvasStore.getState();
+      const vb = viewBoxRef.current;
+      const cx = vb.x + vb.w / 2;
+      const cy = vb.y + vb.h / 2;
+      store.addNode({
+        id: nanoid(8),
+        type: "custom-image",
+        label: name,
+        x: cx - 60,
+        y: cy - 60,
+        width: 120,
+        height: 120,
+        imageDataUrl: dataUrl,
+      });
+    };
     window.addEventListener("canvas-zoom", handleZoom);
-    return () => window.removeEventListener("canvas-zoom", handleZoom);
+    window.addEventListener("add-custom-image", handleAddCustomImage);
+    return () => {
+      window.removeEventListener("canvas-zoom", handleZoom);
+      window.removeEventListener("add-custom-image", handleAddCustomImage);
+    };
   }, []);
 
   const sourceNode = edgeSourceId ? data.nodes.find((n) => n.id === edgeSourceId) : null;

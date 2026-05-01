@@ -36,6 +36,101 @@ export default function Properties() {
   const selectedGroup = selectedGroupId ? data.groups.find((g) => g.id === selectedGroupId) : null;
 
   if (selectedNode) {
+    if (selectedNode.type === "custom-image") {
+      return (
+        <div className="w-64 bg-bg-panel border-l border-border overflow-y-auto shrink-0 p-3">
+          <h2 className="text-sm font-medium text-text-secondary mb-4">カスタム画像</h2>
+          <div className="space-y-3">
+            {selectedNode.imageDataUrl && (
+              <div className="flex justify-center">
+                <img
+                  src={selectedNode.imageDataUrl}
+                  alt={selectedNode.label}
+                  className="max-h-20 max-w-full rounded border border-border object-contain"
+                />
+              </div>
+            )}
+            <div>
+              <label className="text-xs text-text-secondary block mb-1">ラベル</label>
+              <input
+                type="text"
+                value={selectedNode.label}
+                onChange={(e) => updateNode(selectedNode.id, { label: e.target.value })}
+                className="w-full bg-bg-hover border border-border-strong rounded-md px-2 py-1 text-sm text-text"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="text-xs text-text-secondary block mb-1">幅</label>
+                <input
+                  type="number"
+                  min={20}
+                  value={Math.round(selectedNode.width)}
+                  onChange={(e) => updateNode(selectedNode.id, { width: Number(e.target.value) })}
+                  className="w-full bg-bg-hover border border-border-strong rounded-md px-2 py-1 text-sm text-text"
+                />
+              </div>
+              <div>
+                <label className="text-xs text-text-secondary block mb-1">高さ</label>
+                <input
+                  type="number"
+                  min={20}
+                  value={Math.round(selectedNode.height)}
+                  onChange={(e) => updateNode(selectedNode.id, { height: Number(e.target.value) })}
+                  className="w-full bg-bg-hover border border-border-strong rounded-md px-2 py-1 text-sm text-text"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="text-xs text-text-secondary block mb-1">X</label>
+                <input
+                  type="number"
+                  value={Math.round(selectedNode.x)}
+                  onChange={(e) => updateNode(selectedNode.id, { x: Number(e.target.value) })}
+                  className="w-full bg-bg-hover border border-border-strong rounded-md px-2 py-1 text-sm text-text"
+                />
+              </div>
+              <div>
+                <label className="text-xs text-text-secondary block mb-1">Y</label>
+                <input
+                  type="number"
+                  value={Math.round(selectedNode.y)}
+                  onChange={(e) => updateNode(selectedNode.id, { y: Number(e.target.value) })}
+                  className="w-full bg-bg-hover border border-border-strong rounded-md px-2 py-1 text-sm text-text"
+                />
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                const input = document.createElement("input");
+                input.type = "file";
+                input.accept = "image/*";
+                input.onchange = (e) => {
+                  const file = (e.target as HTMLInputElement).files?.[0];
+                  if (!file) return;
+                  const reader = new FileReader();
+                  reader.onload = () => {
+                    updateNode(selectedNode.id, { imageDataUrl: reader.result as string });
+                  };
+                  reader.readAsDataURL(file);
+                };
+                input.click();
+              }}
+              className="w-full bg-accent-soft hover:bg-accent-soft/70 text-accent text-sm px-3 py-1.5 rounded-md transition-colors"
+            >
+              画像を差し替え
+            </button>
+            <button
+              onClick={() => removeNode(selectedNode.id)}
+              className="w-full bg-danger/10 hover:bg-danger/20 text-danger-text text-sm px-3 py-1.5 rounded-md transition-colors"
+            >
+              削除
+            </button>
+          </div>
+        </div>
+      );
+    }
     const service = getServiceDef(selectedNode.type);
     return (
       <div className="w-64 bg-bg-panel border-l border-border overflow-y-auto shrink-0 p-3">

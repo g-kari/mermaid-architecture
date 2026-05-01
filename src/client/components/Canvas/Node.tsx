@@ -24,9 +24,10 @@ export default function Node({
   onConnectEnd,
   onLabelChange,
 }: NodeProps) {
-  const service = getServiceDef(node.type);
-  const color = service?.color || "#666";
-  const iconUrl = getIconUrl(node.type);
+  const isCustomImage = node.type === "custom-image";
+  const service = isCustomImage ? undefined : getServiceDef(node.type);
+  const color = isCustomImage ? "#6b7280" : service?.color || "#666";
+  const iconUrl = isCustomImage ? undefined : getIconUrl(node.type);
   const [hovered, setHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState("");
@@ -103,16 +104,40 @@ export default function Node({
         fontSize={10}
         fontWeight="bold"
       >
-        {service?.name || node.type}
+        {isCustomImage ? "画像" : service?.name || node.type}
       </text>
-      <image
-        href={iconUrl}
-        x={(node.width - 28) / 2}
-        y={28}
-        width={28}
-        height={28}
-        aria-label={service?.name || node.type}
-      />
+      {isCustomImage ? (
+        node.imageDataUrl ? (
+          <image
+            href={node.imageDataUrl}
+            x={4}
+            y={26}
+            width={node.width - 8}
+            height={node.height - 48}
+            preserveAspectRatio="xMidYMid meet"
+            aria-label={node.label}
+          />
+        ) : (
+          <text
+            x={node.width / 2}
+            y={(26 + node.height - 22) / 2 + 4}
+            textAnchor="middle"
+            fill="var(--text-tertiary, #9CA3AF)"
+            fontSize={10}
+          >
+            No Image
+          </text>
+        )
+      ) : (
+        <image
+          href={iconUrl}
+          x={(node.width - 28) / 2}
+          y={28}
+          width={28}
+          height={28}
+          aria-label={service?.name || node.type}
+        />
+      )}
       {isEditing ? (
         <foreignObject x={2} y={node.height - 22} width={node.width - 4} height={20}>
           <input

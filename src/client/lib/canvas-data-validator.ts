@@ -64,6 +64,13 @@ function validateNode(raw: unknown, index: number): CanvasNode {
     node.specs = raw.specs as Record<string, string>;
   }
 
+  if (raw.imageDataUrl !== undefined) {
+    if (typeof raw.imageDataUrl !== "string") {
+      throw new Error(`ノード '${id}' のimageDataUrlはstringである必要があります`);
+    }
+    node.imageDataUrl = raw.imageDataUrl;
+  }
+
   return node;
 }
 
