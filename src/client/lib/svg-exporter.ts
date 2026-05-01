@@ -131,6 +131,59 @@ function removeInteractiveElements(svg: SVGSVGElement): void {
   }
 }
 
+async function embedImages(svg: SVGSVGElement): Promise<void> {
+  const images = svg.querySelectorAll("image");
+  const cache = new Map<string, string>();
+
+  const fetches: Promise<void>[] = [];
+  for (const img of images) {
+    const href =
+      img.getAttribute("href") || img.getAttributeNS("http://www.w3.org/1999/xlink", "href");
+    if (!href || href.startsWith("data:")) continue;
+
+    if (!cache.has(href)) {
+      cache.set(href, "");
+      fetches.push(
+        fetch(href)
+          .then(async (res) => {
+            if (!res.ok) throw new Error(`${res.status}`);
+            const contentType = res.headers.get("content-type") || "";
+            if (contentType.includes("svg") || href.endsWith(".svg")) {
+              const svgText = await res.text();
+              return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svgText)))}`;
+            }
+            const buf = await res.arrayBuffer();
+            const bytes = new Uint8Array(buf);
+            let binary = "";
+            for (const b of bytes) binary += String.fromCharCode(b);
+            const mime = contentType.split(";")[0] || "image/png";
+            return `data:${mime};base64,${btoa(binary)}`;
+          })
+          .then((dataUri) => {
+            cache.set(href, dataUri);
+          })
+          .catch((err) => {
+            console.warn(`[svg-exporter] Failed to embed image: ${href}`, err);
+            cache.delete(href);
+          }),
+      );
+    }
+  }
+
+  await Promise.all(fetches);
+
+  for (const img of images) {
+    const href =
+      img.getAttribute("href") || img.getAttributeNS("http://www.w3.org/1999/xlink", "href");
+    if (!href || href.startsWith("data:")) continue;
+    const dataUri = cache.get(href);
+    if (dataUri) {
+      img.setAttribute("href", dataUri);
+      img.removeAttributeNS("http://www.w3.org/1999/xlink", "href");
+    }
+  }
+}
+
 function removeGridBackground(svg: SVGSVGElement): void {
   const patterns = svg.querySelectorAll("pattern#grid");
   for (const pattern of patterns) {
@@ -143,7 +196,7 @@ function removeGridBackground(svg: SVGSVGElement): void {
   }
 }
 
-export function exportSvg(svgElement: SVGSVGElement, data: CanvasData): string {
+export async function exportSvg(svgElement: SVGSVGElement, data: CanvasData): Promise<string> {
   const vars = getComputedCssVars(svgElement);
   const clone = svgElement.cloneNode(true) as SVGSVGElement;
 
@@ -151,11 +204,12 @@ export function exportSvg(svgElement: SVGSVGElement, data: CanvasData): string {
   removeInteractiveElements(clone);
   resolveCssVarsInElement(clone, vars);
 
-  // Resolve CSS vars in marker defs (e.g. arrowhead fill)
   const markers = clone.querySelectorAll("marker");
   for (const marker of markers) {
     resolveCssVarsInElement(marker, vars);
   }
+
+  await embedImages(clone);
 
   const bounds = computeContentBounds(data);
   const vbX = bounds.x - PADDING;
@@ -167,7 +221,6 @@ export function exportSvg(svgElement: SVGSVGElement, data: CanvasData): string {
   clone.setAttribute("height", String(vbH));
   clone.removeAttribute("class");
 
-  // Add white background rect as the first child after <defs>
   const bgRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
   bgRect.setAttribute("x", String(vbX));
   bgRect.setAttribute("y", String(vbY));
@@ -187,9 +240,13 @@ export function exportSvg(svgElement: SVGSVGElement, data: CanvasData): string {
   return `<?xml version="1.0" encoding="UTF-8"?>\n${svgString}`;
 }
 
-export function exportPng(svgElement: SVGSVGElement, data: CanvasData, scale = 2): Promise<Blob> {
+export async function exportPng(
+  svgElement: SVGSVGElement,
+  data: CanvasData,
+  scale = 2,
+): Promise<Blob> {
+  const svgString = await exportSvg(svgElement, data);
   return new Promise((resolve, reject) => {
-    const svgString = exportSvg(svgElement, data);
     const blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
     const url = URL.createObjectURL(blob);
 

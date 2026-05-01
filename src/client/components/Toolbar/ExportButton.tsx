@@ -51,11 +51,16 @@ export default function ExportButton() {
     URL.revokeObjectURL(url);
   };
 
-  const handleSvgDownload = () => {
+  const handleSvgDownload = async () => {
     const svg = getSvgElement();
     if (!svg) return;
-    const svgString = exportSvg(svg, data);
-    downloadSvg(svgString);
+    setExporting(true);
+    try {
+      const svgString = await exportSvg(svg, data);
+      downloadSvg(svgString);
+    } finally {
+      setExporting(false);
+    }
   };
 
   const handlePngDownload = async () => {
@@ -108,9 +113,10 @@ export default function ExportButton() {
             </p>
             <button
               onClick={handleSvgDownload}
-              className="bg-accent hover:bg-accent-hover text-accent-text px-6 py-2 rounded-md text-sm font-medium"
+              disabled={exporting}
+              className="bg-accent hover:bg-accent-hover text-accent-text px-6 py-2 rounded-md text-sm font-medium disabled:opacity-50"
             >
-              SVG ダウンロード
+              {exporting ? "変換中..." : "SVG ダウンロード"}
             </button>
           </div>
         );
