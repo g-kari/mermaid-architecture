@@ -19,15 +19,27 @@ const GROUP_COLORS: Record<string, string> = {
 export default function Group({ group, nodes, isSelected, onSelect, onDragStart }: GroupProps) {
   const childNodes = nodes.filter((n) => n.group === group.id || group.children.includes(n.id));
 
-  if (childNodes.length === 0) return null;
-
   const padding = 24;
   const headerHeight = 28;
 
-  const minX = Math.min(...childNodes.map((n) => n.x)) - padding;
-  const minY = Math.min(...childNodes.map((n) => n.y)) - padding - headerHeight;
-  const maxX = Math.max(...childNodes.map((n) => n.x + n.width)) + padding;
-  const maxY = Math.max(...childNodes.map((n) => n.y + n.height)) + padding;
+  let minX: number;
+  let minY: number;
+  let maxX: number;
+  let maxY: number;
+
+  if (childNodes.length > 0) {
+    minX = Math.min(...childNodes.map((n) => n.x)) - padding;
+    minY = Math.min(...childNodes.map((n) => n.y)) - padding - headerHeight;
+    maxX = Math.max(...childNodes.map((n) => n.x + n.width)) + padding;
+    maxY = Math.max(...childNodes.map((n) => n.y + n.height)) + padding;
+  } else if (group.x != null && group.y != null) {
+    minX = group.x;
+    minY = group.y;
+    maxX = group.x + (group.width ?? 300);
+    maxY = group.y + (group.height ?? 200);
+  } else {
+    return null;
+  }
 
   const color = GROUP_COLORS[group.type] || GROUP_COLORS.generic;
 

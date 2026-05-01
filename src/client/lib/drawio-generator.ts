@@ -65,7 +65,17 @@ function computeGroupBounds(
     }
   }
 
-  if (rects.length === 0) return null;
+  if (rects.length === 0) {
+    if (group.x != null && group.y != null) {
+      return {
+        x: group.x,
+        y: group.y,
+        width: group.width ?? 300,
+        height: group.height ?? 200,
+      };
+    }
+    return null;
+  }
 
   const minX = Math.min(...rects.map((r) => r.x)) - GROUP_PADDING;
   const minY = Math.min(...rects.map((r) => r.y)) - GROUP_PADDING - GROUP_HEADER_HEIGHT;

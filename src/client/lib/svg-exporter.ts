@@ -37,7 +37,17 @@ function computeContentBounds(data: CanvasData): {
     const childNodes = data.nodes.filter(
       (n) => n.group === group.id || group.children.includes(n.id),
     );
-    if (childNodes.length === 0) continue;
+    if (childNodes.length === 0) {
+      if (group.x != null && group.y != null) {
+        allRects.push({
+          x: group.x,
+          y: group.y,
+          w: group.width ?? 300,
+          h: group.height ?? 200,
+        });
+      }
+      continue;
+    }
 
     const minX = Math.min(...childNodes.map((n) => n.x)) - groupPadding;
     const minY = Math.min(...childNodes.map((n) => n.y)) - groupPadding - groupHeaderHeight;

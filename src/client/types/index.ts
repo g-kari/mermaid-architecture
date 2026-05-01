@@ -72,6 +72,10 @@ export interface CanvasGroup {
   type: string;
   label: string;
   children: string[];
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
 }
 
 export interface CanvasData {
