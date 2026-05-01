@@ -39,6 +39,7 @@ app.get("/api/ws/diagrams/:diagramId", (c) => {
 });
 
 app.use("/assets/*", serveStatic({ manifest }));
+app.use("/aws-icons/*", serveStatic({ manifest }));
 
 app.get("*", serveStatic({ path: "./index.html", manifest }));
 

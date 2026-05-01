@@ -6,6 +6,7 @@ import { defineConfig } from "vite";
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   root: "src/client",
+  publicDir: path.resolve(__dirname, "public"),
   test: {
     root: ".",
     include: ["src/client/**/*.test.ts", "packages/**/tests/**/*.test.ts"],
