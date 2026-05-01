@@ -56,6 +56,7 @@ export interface CanvasNode {
   height: number;
   group?: string;
   specs?: Record<string, string>;
+  imageDataUrl?: string;
 }
 
 export interface CanvasEdge {
