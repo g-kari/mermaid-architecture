@@ -4,6 +4,7 @@ import { Hono } from "hono";
 import { serveStatic } from "hono/cloudflare-workers";
 import { cors } from "hono/cors";
 import { authMiddleware } from "./middleware/auth";
+import ai from "./routes/ai";
 import diagrams from "./routes/diagrams";
 import projects from "./routes/projects";
 import snapshots from "./routes/snapshots";
@@ -26,6 +27,7 @@ app.route("/api/projects", projects);
 app.route("/api", diagrams);
 app.route("/api/templates", templates);
 app.route("/api", snapshots);
+app.route("/api", ai);
 
 app.get("/api/ws/diagrams/:diagramId", (c) => {
   const diagramId = c.req.param("diagramId");

@@ -4,6 +4,7 @@ import Canvas from "../components/Canvas/Canvas";
 import CostPanel from "../components/CostPanel/CostPanel";
 import Palette from "../components/Palette/Palette";
 import Properties from "../components/Properties/Properties";
+import AIGenerateButton from "../components/Toolbar/AIGenerateButton";
 import CostToggle from "../components/Toolbar/CostToggle";
 import ExportButton from "../components/Toolbar/ExportButton";
 import ImportButton from "../components/Toolbar/ImportButton";
@@ -118,6 +119,9 @@ export default function Editor() {
         } else if (e.key === "e") {
           e.preventDefault();
           window.dispatchEvent(new CustomEvent("toggle-export"));
+        } else if (e.key === "g") {
+          e.preventDefault();
+          window.dispatchEvent(new CustomEvent("toggle-ai-generate"));
         } else if (e.key === "i") {
           e.preventDefault();
           window.dispatchEvent(new CustomEvent("toggle-import"));
@@ -161,6 +165,7 @@ export default function Editor() {
             ⌨
           </button>
           <CostToggle active={showCostPanel} onClick={() => setShowCostPanel((v) => !v)} />
+          <AIGenerateButton />
           <ImportButton />
           <ExportButton />
         </div>

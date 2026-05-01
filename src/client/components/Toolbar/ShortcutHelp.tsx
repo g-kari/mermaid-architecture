@@ -6,6 +6,8 @@ const SHORTCUTS = [
   { keys: `${MOD}+Shift+Z`, desc: "やり直す" },
   { keys: `${MOD}+D`, desc: "ノードを複製" },
   { keys: `${MOD}+E`, desc: "エクスポート" },
+  { keys: `${MOD}+G`, desc: "AI図生成" },
+  { keys: `${MOD}+I`, desc: "インポート" },
   { keys: `${MOD}+=/-`, desc: "ズームイン/アウト" },
   { keys: `${MOD}+0`, desc: "ズームリセット" },
   { keys: "Delete", desc: "選択を削除" },

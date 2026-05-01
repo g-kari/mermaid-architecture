@@ -6,6 +6,7 @@ export type Bindings = {
   DEV_MODE: string;
   CF_ACCESS_AUD: string;
   CF_ACCESS_CERTS_URL: string;
+  ANTHROPIC_API_KEY: string;
   __STATIC_CONTENT: KVNamespace;
 };
 
