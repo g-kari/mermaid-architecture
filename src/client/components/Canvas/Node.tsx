@@ -1,6 +1,5 @@
-import { Icon } from "@iconify/react";
 import { useEffect, useRef, useState } from "react";
-import { getIconName } from "../../lib/aws-icons";
+import { getIconUrl } from "../../lib/aws-icons";
 import { getServiceDef } from "../../lib/aws-services";
 import type { CanvasNode } from "../../types";
 
@@ -27,7 +26,7 @@ export default function Node({
 }: NodeProps) {
   const service = getServiceDef(node.type);
   const color = service?.color || "#666";
-  const iconName = getIconName(node.type);
+  const iconUrl = getIconUrl(node.type);
   const [hovered, setHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState("");
@@ -106,11 +105,14 @@ export default function Node({
       >
         {service?.name || node.type}
       </text>
-      {iconName && (
-        <foreignObject x={(node.width - 28) / 2} y={28} width={28} height={28}>
-          <Icon icon={iconName} width={28} height={28} />
-        </foreignObject>
-      )}
+      <image
+        href={iconUrl}
+        x={(node.width - 28) / 2}
+        y={28}
+        width={28}
+        height={28}
+        aria-label={service?.name || node.type}
+      />
       {isEditing ? (
         <foreignObject x={2} y={node.height - 22} width={node.width - 4} height={20}>
           <input

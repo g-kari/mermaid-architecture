@@ -26,7 +26,7 @@ AWS構成図をGUIで作成し、Mermaid / SVG / PNG / draw.io / Markdown とし
 | データベース | Cloudflare D1 (SQLite) |
 | リアルタイム同期 | Yjs + WebSocket (Durable Objects hibernation API) |
 | 認証 | Cloudflare Access JWT |
-| アイコン | Iconify (@iconify/react) |
+| アイコン | AWS Architecture Icons (aws-icons, 静的SVG) |
 | 品質管理 | Biome (lint + format) + Vitest + pre-commit |
 | パッケージ管理 | pnpm |
 | コマンドランナー | just |
