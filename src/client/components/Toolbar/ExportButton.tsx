@@ -3,9 +3,10 @@ import { canvasDataToDrawio, downloadDrawio } from "../../lib/drawio-generator";
 import { canvasDataToMarkdown, downloadMarkdown } from "../../lib/markdown-generator";
 import { canvasDataToMermaid } from "../../lib/mermaid-generator";
 import { downloadPng, downloadSvg, exportPng, exportSvg } from "../../lib/svg-exporter";
+import { canvasDataToTerraform, downloadTerraform } from "../../lib/terraform-generator";
 import { useCanvasStore } from "../../stores/canvas";
 
-type ExportTab = "mermaid" | "svg" | "png" | "drawio" | "markdown";
+type ExportTab = "mermaid" | "svg" | "png" | "drawio" | "markdown" | "terraform";
 
 const TABS: { key: ExportTab; label: string }[] = [
   { key: "mermaid", label: "Mermaid" },
@@ -13,6 +14,7 @@ const TABS: { key: ExportTab; label: string }[] = [
   { key: "png", label: "PNG" },
   { key: "drawio", label: "draw.io" },
   { key: "markdown", label: "Markdown" },
+  { key: "terraform", label: "Terraform" },
 ];
 
 function getSvgElement(): SVGSVGElement | null {
@@ -33,6 +35,7 @@ export default function ExportButton() {
 
   const mermaidCode = canvasDataToMermaid(data);
   const markdownCode = canvasDataToMarkdown(data);
+  const terraformCode = canvasDataToTerraform(data);
 
   const copyMermaid = async () => {
     await navigator.clipboard.writeText(mermaidCode);
@@ -163,6 +166,31 @@ export default function ExportButton() {
                 className="bg-bg-hover hover:bg-bg px-4 py-2 rounded-md text-sm font-medium"
               >
                 .md ダウンロード
+              </button>
+            </div>
+          </>
+        );
+
+      case "terraform":
+        return (
+          <>
+            <pre className="flex-1 overflow-auto p-4 text-sm text-text-secondary font-mono whitespace-pre">
+              {terraformCode}
+            </pre>
+            <div className="flex gap-2 p-4 border-t border-border">
+              <button
+                onClick={async () => {
+                  await navigator.clipboard.writeText(terraformCode);
+                }}
+                className="bg-accent hover:bg-accent-hover text-accent-text px-4 py-2 rounded-md text-sm font-medium"
+              >
+                クリップボードにコピー
+              </button>
+              <button
+                onClick={() => downloadTerraform(terraformCode)}
+                className="bg-bg-hover hover:bg-bg px-4 py-2 rounded-md text-sm font-medium"
+              >
+                .tf ダウンロード
               </button>
             </div>
           </>
