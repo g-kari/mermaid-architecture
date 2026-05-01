@@ -39,6 +39,15 @@
     "lineWidth": 100
   },
   "files": {
-    "includes": ["src/**", "*.json", "*.ts", "!!dist", "!!node_modules", "!!.wrangler", "!!.devbox"]
+    "includes": [
+      "src/**",
+      "packages/**",
+      "*.json",
+      "*.ts",
+      "!!dist",
+      "!!node_modules",
+      "!!.wrangler",
+      "!!.devbox"
+    ]
   }
 }
