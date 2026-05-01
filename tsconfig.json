@@ -15,9 +15,10 @@
     "noEmit": true,
     "paths": {
       "@worker/*": ["./src/worker/*"],
-      "@client/*": ["./src/client/*"]
+      "@client/*": ["./src/client/*"],
+      "@mermaid-architecture/terraform-generator": ["./packages/terraform-generator/src/index.ts"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "packages"],
   "exclude": ["node_modules", "dist"]
 }

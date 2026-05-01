@@ -21,6 +21,7 @@
     "check-all": "tsc --noEmit && biome check ."
   },
   "dependencies": {
+    "@mermaid-architecture/terraform-generator": "workspace:*",
     "hono": "^4.7.0",
     "lib0": "^0.2.117",
     "nanoid": "^5.1.9",

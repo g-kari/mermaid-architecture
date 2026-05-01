@@ -6,6 +6,10 @@ import { defineConfig } from "vite";
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   root: "src/client",
+  test: {
+    root: ".",
+    include: ["src/client/**/*.test.ts", "packages/**/tests/**/*.test.ts"],
+  },
   build: {
     outDir: "../../dist/client",
     emptyOutDir: true,
