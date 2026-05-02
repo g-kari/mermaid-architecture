@@ -1,5 +1,5 @@
 import type { CanvasData, CanvasNode } from "../types";
-import { getServicePricing } from "./aws-pricing";
+import { getServicePricing, type PricingTier } from "./aws-pricing";
 import { getServiceDef } from "./aws-services";
 
 export interface ServiceCost {
@@ -18,7 +18,7 @@ export interface CostSummary {
   currency: "USD";
 }
 
-function calculateNodeCost(node: CanvasNode): ServiceCost | null {
+export function calculateNodeCost(node: CanvasNode): ServiceCost | null {
   const pricing = getServicePricing(node.type);
   if (!pricing) {
     return null;
@@ -41,6 +41,7 @@ function calculateNodeCost(node: CanvasNode): ServiceCost | null {
     };
   }
 
+  const matchedTiers: PricingTier[] = [];
   for (const [specKey, specValue] of Object.entries(specs)) {
     const tierList = pricing.tiers[specKey];
     if (!tierList) continue;
@@ -50,15 +51,21 @@ function calculateNodeCost(node: CanvasNode): ServiceCost | null {
       tierList.find((tier) => tier.label.toLowerCase() === lowerValue) ??
       tierList.find((tier) => tier.label.toLowerCase().includes(lowerValue));
     if (matched) {
-      return {
-        nodeId: node.id,
-        serviceId: node.type,
-        serviceName,
-        monthlyCost: matched.monthlyCost,
-        isMinimumConfig: false,
-        details: `${matched.label} (${pricing.pricingUnit})`,
-      };
+      matchedTiers.push(matched);
     }
+  }
+
+  if (matchedTiers.length > 0) {
+    const totalCost = matchedTiers.reduce((sum, tier) => sum + tier.monthlyCost, 0);
+    const labels = matchedTiers.map((tier) => tier.label).join(" + ");
+    return {
+      nodeId: node.id,
+      serviceId: node.type,
+      serviceName,
+      monthlyCost: totalCost,
+      isMinimumConfig: false,
+      details: `${labels} (${pricing.pricingUnit})`,
+    };
   }
 
   return {
