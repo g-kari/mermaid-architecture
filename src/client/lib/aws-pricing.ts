@@ -677,3 +677,28 @@ export const AWS_PRICING: Record<string, ServicePricing> = {
 export function getServicePricing(serviceId: string): ServicePricing | undefined {
   return AWS_PRICING[serviceId];
 }
+
+export interface SpecOption {
+  value: string;
+  label: string;
+  monthlyCost: number;
+}
+
+export function getSpecOptions(serviceId: string, specKey: string): SpecOption[] | null {
+  const pricing = AWS_PRICING[serviceId];
+  if (!pricing?.tiers) {
+    return null;
+  }
+  const tiers = pricing.tiers[specKey];
+  if (!tiers) {
+    return null;
+  }
+  return tiers.map((tier) => ({
+    value: tier.label,
+    label: `${tier.label} - $${tier.monthlyCost.toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}/月`,
+    monthlyCost: tier.monthlyCost,
+  }));
+}

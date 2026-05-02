@@ -1,4 +1,6 @@
+import { getSpecOptions } from "../../lib/aws-pricing";
 import { getServiceDef } from "../../lib/aws-services";
+import { calculateNodeCost, formatCurrency } from "../../lib/cost-calculator";
 import { useCanvasStore } from "../../stores/canvas";
 
 const GROUP_TYPE_LABELS: Record<string, string> = {
@@ -165,28 +167,74 @@ export default function Properties() {
                 スペック
               </summary>
               <div className="space-y-2">
-                {service.specFields.map((field) => (
-                  <div key={field.key}>
-                    <label className="text-xs text-text-secondary block mb-1">{field.label}</label>
-                    <input
-                      type="text"
-                      value={selectedNode.specs?.[field.key] || ""}
-                      placeholder={field.placeholder}
-                      onChange={(e) =>
-                        updateNode(selectedNode.id, {
-                          specs: {
-                            ...selectedNode.specs,
-                            [field.key]: e.target.value,
-                          },
-                        })
-                      }
-                      className="w-full bg-bg-hover border border-border-strong rounded-md px-2 py-1 text-sm text-text"
-                    />
-                  </div>
-                ))}
+                {service.specFields.map((field) => {
+                  const options = getSpecOptions(selectedNode.type, field.key);
+                  if (options) {
+                    return (
+                      <div key={field.key}>
+                        <label className="text-xs text-text-secondary block mb-1">
+                          {field.label}
+                        </label>
+                        <select
+                          value={selectedNode.specs?.[field.key] || ""}
+                          onChange={(e) =>
+                            updateNode(selectedNode.id, {
+                              specs: {
+                                ...selectedNode.specs,
+                                [field.key]: e.target.value,
+                              },
+                            })
+                          }
+                          className="w-full bg-bg-hover border border-border-strong rounded-md px-2 py-1 text-sm text-text"
+                        >
+                          <option value="">選択してください</option>
+                          {options.map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    );
+                  }
+                  return (
+                    <div key={field.key}>
+                      <label className="text-xs text-text-secondary block mb-1">
+                        {field.label}
+                      </label>
+                      <input
+                        type="text"
+                        value={selectedNode.specs?.[field.key] || ""}
+                        placeholder={field.placeholder}
+                        onChange={(e) =>
+                          updateNode(selectedNode.id, {
+                            specs: {
+                              ...selectedNode.specs,
+                              [field.key]: e.target.value,
+                            },
+                          })
+                        }
+                        className="w-full bg-bg-hover border border-border-strong rounded-md px-2 py-1 text-sm text-text"
+                      />
+                    </div>
+                  );
+                })}
               </div>
             </details>
           )}
+          {(() => {
+            const nodeCost = calculateNodeCost(selectedNode);
+            if (!nodeCost) return null;
+            return (
+              <div className="bg-accent-soft rounded-md p-2">
+                <div className="text-xs text-text-secondary mb-1">月額コスト</div>
+                <div className="text-sm font-medium text-accent">
+                  {formatCurrency(nodeCost.monthlyCost)}/月
+                </div>
+                <div className="text-xs text-text-tertiary mt-0.5">{nodeCost.details}</div>
+              </div>
+            );
+          })()}
           <div className="grid grid-cols-2 gap-2">
             <div>
               <label className="text-xs text-text-secondary block mb-1">X</label>
