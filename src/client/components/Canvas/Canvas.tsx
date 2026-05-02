@@ -2,11 +2,13 @@ import { nanoid } from "nanoid";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { AwsServiceDef, GroupTypeDef } from "../../lib/aws-services";
 import { useCanvasStore } from "../../stores/canvas";
+import { useCollaborationStore } from "../../stores/collaboration";
 import type { CanvasGroup, CanvasNode } from "../../types";
 import EdgeComponent from "./Edge";
 import EdgeCreator from "./EdgeCreator";
 import Group, { GROUP_HEADER_HEIGHT, GROUP_PADDING } from "./Group";
 import NodeComponent from "./Node";
+import RemoteCursors from "./RemoteCursors";
 
 const DEFAULT_VIEWBOX = { x: 0, y: 0, w: 1200, h: 800 };
 
@@ -71,6 +73,10 @@ export default function Canvas() {
     selectEdge,
     selectGroup,
   } = useCanvasStore();
+
+  const remoteCursors = useCollaborationStore((s) => s.remoteCursors);
+  const updateCursorPosition = useCollaborationStore((s) => s.updateCursorPosition);
+  const lastCursorBroadcast = useRef(0);
 
   const svgRef = useRef<SVGSVGElement>(null);
   const [viewBox, setViewBox] = useState({ x: 0, y: 0, w: 1200, h: 800 });
@@ -182,6 +188,13 @@ export default function Canvas() {
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
+    const now = Date.now();
+    if (now - lastCursorBroadcast.current > 40) {
+      lastCursorBroadcast.current = now;
+      const cursorPos = svgPoint(e.clientX, e.clientY);
+      updateCursorPosition(cursorPos.x, cursorPos.y);
+    }
+
     if (edgeSourceId) {
       const pos = svgPoint(e.clientX, e.clientY);
       setEdgeEndPos(pos);
@@ -427,6 +440,8 @@ export default function Canvas() {
             onLabelChange={handleLabelChange}
           />
         ))}
+
+        <RemoteCursors cursors={remoteCursors} />
       </svg>
     </div>
   );

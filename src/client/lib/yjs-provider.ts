@@ -20,10 +20,35 @@ export class DiagramProvider {
     this.diagramId = diagramId;
     this.doc = new Y.Doc();
     this.awareness = new awarenessProtocol.Awareness(this.doc);
-    this.connect();
+
+    this.doc.on("update", (update: Uint8Array, origin: unknown) => {
+      if (origin === this) return;
+      if (!this.connected || !this.ws) return;
+      const encoder = encoding.createEncoder();
+      encoding.writeVarUint(encoder, MSG_SYNC);
+      syncProtocol.writeUpdate(encoder, update);
+      this.ws.send(encoding.toUint8Array(encoder));
+    });
+
+    this.awareness.on(
+      "update",
+      ({ added, updated, removed }: { added: number[]; updated: number[]; removed: number[] }) => {
+        if (!this.connected || !this.ws) return;
+        const changedClients = [...added, ...updated, ...removed];
+        const encoder = encoding.createEncoder();
+        encoding.writeVarUint(encoder, MSG_AWARENESS);
+        encoding.writeVarUint8Array(
+          encoder,
+          awarenessProtocol.encodeAwarenessUpdate(this.awareness, changedClients),
+        );
+        this.ws.send(encoding.toUint8Array(encoder));
+      },
+    );
+
+    this.connectWs();
   }
 
-  private connect() {
+  private connectWs() {
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const url = `${protocol}//${window.location.host}/api/ws/diagrams/${this.diagramId}`;
     this.ws = new WebSocket(url);
@@ -82,33 +107,11 @@ export class DiagramProvider {
     this.ws.onerror = () => {
       this.ws?.close();
     };
-
-    this.doc.on("update", (update: Uint8Array, origin: unknown) => {
-      if (origin === this) return;
-      const encoder = encoding.createEncoder();
-      encoding.writeVarUint(encoder, MSG_SYNC);
-      syncProtocol.writeUpdate(encoder, update);
-      this.ws?.send(encoding.toUint8Array(encoder));
-    });
-
-    this.awareness.on(
-      "update",
-      ({ added, updated, removed }: { added: number[]; updated: number[]; removed: number[] }) => {
-        const changedClients = [...added, ...updated, ...removed];
-        const encoder = encoding.createEncoder();
-        encoding.writeVarUint(encoder, MSG_AWARENESS);
-        encoding.writeVarUint8Array(
-          encoder,
-          awarenessProtocol.encodeAwarenessUpdate(this.awareness, changedClients),
-        );
-        this.ws?.send(encoding.toUint8Array(encoder));
-      },
-    );
   }
 
   private scheduleReconnect() {
     if (this.reconnectTimer) clearTimeout(this.reconnectTimer);
-    this.reconnectTimer = setTimeout(() => this.connect(), 3000);
+    this.reconnectTimer = setTimeout(() => this.connectWs(), 3000);
   }
 
   isConnected() {

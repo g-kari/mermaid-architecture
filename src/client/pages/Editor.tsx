@@ -26,17 +26,32 @@ export default function Editor() {
 
   useEffect(() => {
     if (!diagramId) return;
+    connect(diagramId);
+
     api.get<Diagram>(`/diagrams/${diagramId}`).then((d) => {
       setDiagram(d);
       if (d.canvas_data) {
         try {
-          setData(JSON.parse(d.canvas_data) as CanvasData);
+          const canvasData = JSON.parse(d.canvas_data) as CanvasData;
+          const { binding } = useCollaborationStore.getState();
+          if (binding) {
+            const existing = binding.yjsToCanvasData();
+            const isEmpty =
+              existing.nodes.length === 0 &&
+              existing.edges.length === 0 &&
+              existing.groups.length === 0;
+            if (isEmpty) {
+              setData(canvasData);
+              binding.initFromCanvasData(canvasData);
+            }
+          } else {
+            setData(canvasData);
+          }
         } catch {
           // ignore invalid JSON
         }
       }
     });
-    connect(diagramId);
     return () => disconnect();
   }, [diagramId, setData, connect, disconnect]);
 

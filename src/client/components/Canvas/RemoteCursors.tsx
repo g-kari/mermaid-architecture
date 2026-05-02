@@ -1,10 +1,4 @@
-interface RemoteCursor {
-  clientId: number;
-  name: string;
-  color: string;
-  x: number;
-  y: number;
-}
+import type { RemoteCursor } from "../../stores/collaboration";
 
 interface RemoteCursorsProps {
   cursors: RemoteCursor[];
@@ -23,14 +17,14 @@ export default function RemoteCursors({ cursors }: RemoteCursorsProps) {
           <rect
             x={10}
             y={12}
-            width={cursor.name.length * 6 + 8}
+            width={Math.min(cursor.name.length, 12) * 6 + 8}
             height={16}
             rx={3}
             fill={cursor.color}
             opacity={0.9}
           />
           <text x={14} y={24} fill="white" fontSize={10} fontWeight="bold">
-            {cursor.name}
+            {cursor.name.length > 12 ? `${cursor.name.slice(0, 12)}…` : cursor.name}
           </text>
         </g>
       ))}

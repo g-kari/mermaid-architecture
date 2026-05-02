@@ -158,22 +158,25 @@ export class DiagramRoom implements DurableObject {
 
     const state = Y.encodeStateAsUpdate(this.doc);
 
-    const nodesMap = this.doc.getMap("canvas");
+    const canvasMap = this.doc.getMap("canvas");
     let canvasData: string | null = null;
-    const mermaidCode: string | null = null;
 
-    if (nodesMap.size > 0) {
+    if (canvasMap.size > 0) {
       try {
-        canvasData = JSON.stringify(nodesMap.toJSON());
+        const raw = canvasMap.toJSON() as Record<string, Record<string, string>>;
+        const nodes = raw.nodes ? Object.values(raw.nodes).map((v) => JSON.parse(v)) : [];
+        const edges = raw.edges ? Object.values(raw.edges).map((v) => JSON.parse(v)) : [];
+        const groups = raw.groups ? Object.values(raw.groups).map((v) => JSON.parse(v)) : [];
+        canvasData = JSON.stringify({ nodes, edges, groups });
       } catch {
         // ignore serialization errors
       }
     }
 
     await this.env.DB.prepare(
-      `UPDATE diagrams SET yjs_state = ?, canvas_data = ?, mermaid_code = ?, updated_at = datetime('now') WHERE id = ?`,
+      `UPDATE diagrams SET yjs_state = ?, canvas_data = ?, updated_at = datetime('now') WHERE id = ?`,
     )
-      .bind(state, canvasData, mermaidCode, this.diagramId)
+      .bind(state, canvasData, this.diagramId)
       .run();
 
     this.dirty = false;
