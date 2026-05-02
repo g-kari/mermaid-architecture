@@ -17,6 +17,7 @@ interface CanvasState {
   redoStack: CanvasData[];
 
   setData: (data: CanvasData) => void;
+  applyRemoteData: (data: CanvasData) => void;
   pushUndo: () => void;
   undo: () => void;
   redo: () => void;
@@ -47,6 +48,8 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
   redoStack: [],
 
   setData: (data) => set({ data, undoStack: [], redoStack: [] }),
+
+  applyRemoteData: (data) => set({ data }),
 
   pushUndo: () =>
     set((s) => ({
