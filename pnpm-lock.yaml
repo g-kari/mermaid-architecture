@@ -12,8 +12,8 @@ importers:
         specifier: workspace:*
         version: link:packages/terraform-generator
       hono:
-        specifier: ^4.7.0
-        version: 4.12.15
+        specifier: ^4.12.16
+        version: 4.12.16
       lib0:
         specifier: ^0.2.117
         version: 0.2.117
@@ -1334,6 +1334,10 @@ packages:
 
   hono@4.12.15:
     resolution: {integrity: sha512-qM0jDhFEaCBb4TxoW7f53Qrpv9RBiayUHo0S52JudprkhvpjIrGoU1mnnr29Fvd1U335ZFPZQY1wlkqgfGXyLg==}
+    engines: {node: '>=16.9.0'}
+
+  hono@4.12.16:
+    resolution: {integrity: sha512-jN0ZewiNAWSe5khM3EyCmBb250+b40wWbwNILNfEvq84VREWwOIkuUsFONk/3i3nqkz7Oe1PcpM2mwQEK2L9Kg==}
     engines: {node: '>=16.9.0'}
 
   http-errors@2.0.1:
@@ -2982,6 +2986,8 @@ snapshots:
       function-bind: 1.1.2
 
   hono@4.12.15: {}
+
+  hono@4.12.16: {}
 
   http-errors@2.0.1:
     dependencies:
