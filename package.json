@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@mermaid-architecture/terraform-generator": "workspace:*",
-    "hono": "^4.7.0",
+    "hono": "^4.12.16",
     "lib0": "^0.2.117",
     "nanoid": "^5.1.9",
     "react": "^19.1.0",
