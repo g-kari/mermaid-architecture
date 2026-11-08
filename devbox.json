@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.17.1/.schema/devbox.schema.json",
-  "packages": ["nodejs@latest", "pnpm@latest", "just@latest", "pre-commit@latest"],
+  "packages": ["nodejs@latest", "pnpm@9.15.3", "just@latest", "pre-commit@latest"],
   "shell": {
     "init_hook": ["echo 'Welcome to devbox!' > /dev/null"],
     "scripts": {
